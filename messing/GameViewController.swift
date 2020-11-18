@@ -35,13 +35,14 @@ class GameViewController: UIViewController {
         return true
     }
 
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    /*override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
             return .allButUpsideDown
         } else {
             return .all
         }
     }
+    we changed the supported orientations in info.plist but we are not brave enough to delete this lines of code*/
 
     override var prefersStatusBarHidden: Bool {
         return true

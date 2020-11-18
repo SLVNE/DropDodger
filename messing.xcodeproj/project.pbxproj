@@ -14,6 +14,7 @@
 		0282C42F25634ED7006A0506 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0282C42E25634ED7006A0506 /* GameViewController.swift */; };
 		0282C43225634ED7006A0506 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0282C43025634ED7006A0506 /* Main.storyboard */; };
 		0282C43425634ED8006A0506 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0282C43325634ED8006A0506 /* Assets.xcassets */; };
+		02969BB72564B306007C93D5 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02969BB62564B306007C93D5 /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		0282C43125634ED7006A0506 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0282C43325634ED8006A0506 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0282C43525634ED8006A0506 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		02969BB62564B306007C93D5 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				0282C43025634ED7006A0506 /* Main.storyboard */,
 				0282C43325634ED8006A0506 /* Assets.xcassets */,
 				0282C43525634ED8006A0506 /* Info.plist */,
+				02969BB62564B306007C93D5 /* Launch Screen.storyboard */,
 			);
 			path = messing;
 			sourceTree = "<group>";
@@ -130,6 +133,7 @@
 				0282C43225634ED7006A0506 /* Main.storyboard in Resources */,
 				0282C42925634ED7006A0506 /* GameScene.sks in Resources */,
 				0282C43425634ED8006A0506 /* Assets.xcassets in Resources */,
+				02969BB72564B306007C93D5 /* Launch Screen.storyboard in Resources */,
 				0282C42B25634ED7006A0506 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

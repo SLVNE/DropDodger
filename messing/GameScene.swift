@@ -11,17 +11,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var player: SKSpriteNode!
     
-    let redBall_tx = SKTexture(imageNamed: "redball.png")
-    var redBall_ph: SKPhysicsBody!
-    
     // create a variable for the moving background
     var bground = SKSpriteNode()
     
     // create a local variable for our player
     
     override func didMove(to view: SKView) {
-        
-        redBall_ph = SKPhysicsBody(texture: redBall_tx, size: redBall_tx.size())
         
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
@@ -59,12 +54,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.setScale(0.3)
         player.position = CGPoint(x: 0, y: frame.height * 0.33)
         
-        addChild(player)
+        
         
         player.physicsBody = SKPhysicsBody(texture: playerTexture, size: playerTexture.size())
         player.physicsBody!.contactTestBitMask = player.physicsBody!.collisionBitMask
         player.physicsBody?.isDynamic = true
         player.physicsBody?.affectedByGravity = false;
+        
+        addChild(player)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {

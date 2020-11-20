@@ -3,63 +3,78 @@
 //  messing
 //
 //  Created by Ludwig Müller on 16.11.20.
-//
+//  Restructuring and physics update by Silvian Ene on 19.11.20.
 
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
+    
+    var player: SKSpriteNode!
+    
+    let redBall_tx = SKTexture(imageNamed: "redball.png")
+    var redBall_ph: SKPhysicsBody!
     
     // create a variable for the moving background
     var bground = SKSpriteNode()
     
     // create a local variable for our player
-    private var player : SKSpriteNode?
     
     override func didMove(to view: SKView) {
-        // change the anchor point of something for whatever reason, oh and 0.5, 0.5 is also the default value, so there's no logical reason to do this... maybe we can remove it some day when we understand what it actually does
+        
+        redBall_ph = SKPhysicsBody(texture: redBall_tx, size: redBall_tx.size())
+        
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
-        // assign picture to our player sprite node
-        player = SKSpriteNode(imageNamed: "redBall.png")
-        // change the size of the sprite node, there probably exist more elegant ways to do this
-        player?.setScale(0.2)
-        
-        // next line would alter the point where we grap our player sprite
-        // (x: 0,5, y: 0.5) is default value
-        // player?.anchorPoint = CGPoint(x: 1, y: 0.5)
-        
-        player?.position = CGPoint(x: 0, y: 400)
+        //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
+        //physicsWorld.contactDelegate = self
         
         // if sibling order is ignored, which we do in the GameViewController.swift file, then spriteKit renders our sprites in the order of their z-value
         // give sprite the z-value 1 so it's higher than our background
-        player?.zPosition = 1
         
-        self.addChild(player!)
+        //self.addChild(redBall_ph)
+        createPlayer()
         
         createBGround()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // I think runs the for loop for as many times as there are touches
+        //player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        //player.physicsBody?.applyImpulse(CGVector(dx: 20000, dy: 0))
+        
         for touch in touches {
             
-            // save the location of the touch into a variable
             let location = touch.location(in: self)
             
-            // change the player's position to the position of the touch
             player!.position.x = location.x
+            
         }
+    }
+    
+    func createPlayer() {
+        let playerTexture = SKTexture(imageNamed: "redBall")
+        player = SKSpriteNode(texture: playerTexture)
+        player.zPosition = 10
+        player.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        player.setScale(0.3)
+        player.position = CGPoint(x: 0, y: frame.height * 0.33)
+        
+        addChild(player)
+        
+        player.physicsBody = SKPhysicsBody(texture: playerTexture, size: playerTexture.size())
+        player.physicsBody!.contactTestBitMask = player.physicsBody!.collisionBitMask
+        player.physicsBody?.isDynamic = true
+        player.physicsBody?.affectedByGravity = false;
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         // I think runs the for loop for as many times as there are touches
         for touch in touches {
             
-            // save the location of the touch into a variable
             let location = touch.location(in: self)
             
-            // change the player's position to the position of the touch
             player!.position.x = location.x
+            
         }
     }
     

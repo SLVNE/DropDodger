@@ -23,10 +23,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
         //physicsWorld.contactDelegate = self
         
-        // if sibling order is ignored, which we do in the GameViewController.swift file, then spriteKit renders our sprites in the order of their z-value
-        // give sprite the z-value 1 so it's higher than our background
-        
-        //self.addChild(redBall_ph)
         createPlayer()
         
         createBGround()

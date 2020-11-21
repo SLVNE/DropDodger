@@ -16,6 +16,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // create a local variable for our player
     
+    var scoreLabel: SKLabelNode!
+
+    var score = 0 {
+        didSet {
+            scoreLabel.text = "SCORE: \(score)"
+        }
+    }
+    
+    func createScore() {
+        scoreLabel = SKLabelNode(fontNamed: "Optima-ExtraBlack")
+        scoreLabel.fontSize = 36
+
+        scoreLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 60)
+        scoreLabel.text = "SCORE: 0"
+        scoreLabel.fontColor = UIColor.black
+        scoreLabel.zPosition = 2
+
+        addChild(scoreLabel)
+    }
+    
     override func didMove(to view: SKView) {
         
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -23,10 +43,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
         //physicsWorld.contactDelegate = self
         
+        createScore()
         createPlayer()
-        
+        startRocks()
         createBGround()
     }
+    
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // I think runs the for loop for as many times as there are touches
@@ -89,6 +111,66 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             bground.position = CGPoint(x: -bground.frame.width / 2, y: CGFloat(i) * bground.size.width)
             self.addChild(bground)
         }
+    }
+    
+    func createRocks() {
+        // 1
+        
+        let rockTexture = SKTexture(imageNamed: "redBox")
+
+        //let topRock = SKSpriteNode(texture: rockTexture)
+        //topRock.zRotation = .pi
+        //topRock.xScale = -1.0
+
+        let rocc = SKSpriteNode(texture: rockTexture)
+
+        //topRock.zPosition = 1
+        rocc.zPosition = 1
+        //rocc.zRotation = .pi/2
+
+        //2
+        let rockCollision = SKSpriteNode(color: UIColor.red, size: CGSize(width: frame.width, height: 32))
+        rockCollision.name = "scoreDetect"
+        
+        rockCollision.zPosition = 1
+        
+        //rockCollision.anchorPoint = CGPoint(x: 0.5, y: 0)
+        //rocc.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        
+        //addChild(topRock)
+        addChild(rocc)
+        addChild(rockCollision)
+
+        // 3
+        //let yPosition = -frame.height/2
+
+        //let max = CGFloat(frame.height / 3)
+        let xPosition = CGFloat.random(in: -frame.width/2...frame.width/2)
+
+        // 4
+        //topRock.position = CGPoint(x: xPosition, y: yPosition + topRock.size.height + rockDistance)
+        rocc.position = CGPoint(x: xPosition, y: -frame.height/2)//CGFloat(yPosition) - rockDistance)
+        rockCollision.position = CGPoint(x: 0, y: -frame.height/2 - (rocc.size.height/2 + rockCollision.size.height/2))
+
+        let endPosition = frame.width + (rocc.frame.width * 2)
+
+        let moveAction = SKAction.moveBy(x: 0, y: endPosition, duration: 8)
+        let moveSequence = SKAction.sequence([moveAction, SKAction.removeFromParent()])
+        //topRock.run(moveSequence)
+        rocc.run(moveSequence)
+        rockCollision.run(moveSequence)
+    }
+    
+    func startRocks() {
+        let create = SKAction.run { [unowned self] in
+            self.createRocks()
+        }
+
+        let wait = SKAction.wait(forDuration: 3)
+        let sequence = SKAction.sequence([create, wait])
+        let repeatForever = SKAction.repeatForever(sequence)
+
+        run(repeatForever)
     }
     
     func moveBGround(){

@@ -79,6 +79,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody!.contactTestBitMask = player.physicsBody!.collisionBitMask
         player.physicsBody?.isDynamic = true
         player.physicsBody?.affectedByGravity = false;
+        player.physicsBody?.collisionBitMask = 0
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        if contact.bodyA.node?.name == "scoreDetect" || contact.bodyB.node?.name == "scoreDetect" {
+            if contact.bodyA.node == player {
+                contact.bodyB.node?.removeFromParent()
+            } else {
+                contact.bodyA.node?.removeFromParent()
+            }
+
+            //let sound = SKAction.playSoundFileNamed("coin.wav", waitForCompletion: false)
+            //run(sound)
+
+            score += 1
+
+            return
+        }
+
+        guard contact.bodyA.node != nil && contact.bodyB.node != nil else {
+            return
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -108,6 +130,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // center the background
             bground.anchorPoint = CGPoint(x: 0, y: 0.5)
             bground.position = CGPoint(x: -bground.frame.width / 2, y: CGFloat(i) * bground.size.width)
+            //bground.physicsBody = SKPhysicsBody(texture: bground.texture!, size: bground.texture!.size())
+            //bground.physicsBody?.isDynamic = false
             self.addChild(bground)
         }
     }
@@ -122,6 +146,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //topRock.xScale = -1.0
 
         let rocc = SKSpriteNode(texture: rockTexture)
+        rocc.physicsBody = SKPhysicsBody(texture: rockTexture, size: rockTexture.size())
+        rocc.physicsBody?.isDynamic = false
 
         //topRock.zPosition = 1
         rocc.zPosition = 1
@@ -130,6 +156,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //2
         let rockCollision = SKSpriteNode(color: UIColor.red, size: CGSize(width: frame.width, height: 32))
         rockCollision.name = "scoreDetect"
+        rockCollision.physicsBody = SKPhysicsBody(rectangleOf: rockCollision.size)
+        rockCollision.physicsBody?.isDynamic = false
         
         rockCollision.zPosition = 1
         

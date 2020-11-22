@@ -82,6 +82,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody?.collisionBitMask = 0
     }
     
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // I think runs the for loop for as many times as there are touches
+        for touch in touches {
+            
+            let location = touch.location(in: self)
+            
+            player!.position.x = location.x
+            
+        }
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        // Called before each frame is rendered
+        moveBGround()
+    }
+    
     func didBegin(_ contact: SKPhysicsContact) {
         if contact.bodyA.node?.name == "scoreDetect" || contact.bodyB.node?.name == "scoreDetect" {
             if contact.bodyA.node == player {
@@ -101,22 +118,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         guard contact.bodyA.node != nil && contact.bodyB.node != nil else {
             return
         }
-    }
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // I think runs the for loop for as many times as there are touches
-        for touch in touches {
-            
-            let location = touch.location(in: self)
-            
-            player!.position.x = location.x
-            
-        }
-    }
-    
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-        moveBGround()
     }
     
     func createBGround(){
@@ -216,3 +217,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }))
     }
 }
+
+
+//testing

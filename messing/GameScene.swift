@@ -75,7 +75,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         addChild(player)
         
-        player.physicsBody = SKPhysicsBody(texture: playerTexture, size: playerTexture.size())
+        player.physicsBody = SKPhysicsBody(texture: playerTexture, size: player.size)
         player.physicsBody!.contactTestBitMask = player.physicsBody!.collisionBitMask
         player.physicsBody?.isDynamic = true
         player.physicsBody?.affectedByGravity = false;
@@ -217,6 +217,3 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }))
     }
 }
-
-
-//testing

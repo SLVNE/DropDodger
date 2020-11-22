@@ -39,9 +39,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
         
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
+       
         //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
-        //physicsWorld.contactDelegate = self
+        physicsWorld.contactDelegate = self
         
         createScore()
         createPlayer()
@@ -73,13 +73,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.position = CGPoint(x: 0, y: frame.height * 0.33)
         
         
+        addChild(player)
         
         player.physicsBody = SKPhysicsBody(texture: playerTexture, size: playerTexture.size())
         player.physicsBody!.contactTestBitMask = player.physicsBody!.collisionBitMask
         player.physicsBody?.isDynamic = true
         player.physicsBody?.affectedByGravity = false;
-        
-        addChild(player)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {

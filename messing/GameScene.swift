@@ -45,7 +45,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         createScore()
         createPlayer()
-        startObstacles()
+        startObstacles(obstacleFrequency: 1.5)
         createBGround()
     }
     
@@ -189,13 +189,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ScoreCountBar.run(moveSequence)
     }
     
-    // start creating an obstacle every three seconds
-    func startObstacles() {
+    // start creating an obstacle every obstacleFrequency seconds
+    func startObstacles(obstacleFrequency: Float16) {
         let create = SKAction.run { [unowned self] in
             self.createObstacles(movingDuration: 1)
         }
 
-        let wait = SKAction.wait(forDuration: 3)
+        let wait = SKAction.wait(forDuration: TimeInterval(obstacleFrequency))
         let sequence = SKAction.sequence([create, wait])
         let repeatForever = SKAction.repeatForever(sequence)
 

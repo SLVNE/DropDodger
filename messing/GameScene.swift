@@ -25,9 +25,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createScore() {
+        // create a score label
         scoreLabel = SKLabelNode(fontNamed: "Optima-ExtraBlack")
         scoreLabel.fontSize = 36
-
         scoreLabel.position = CGPoint(x: frame.midX, y: frame.maxY - 60)
         scoreLabel.text = "SCORE: 0"
         scoreLabel.fontColor = UIColor.black
@@ -45,7 +45,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         createScore()
         createPlayer()
-        startRocks()
+        startObstacles()
         createBGround()
     }
     
@@ -99,8 +99,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         moveBGround()
     }
     
+    // this function detects contact
     func didBegin(_ contact: SKPhysicsContact) {
+        // this figures out in which order the function returns the colliding bodies
+        // that matters because we have to remove the right body
         if contact.bodyA.node?.name == "scoreDetect" || contact.bodyB.node?.name == "scoreDetect" {
+            // this removes the bar that we use to count the score so we don't have unnecessary nodes in our program
             if contact.bodyA.node == player {
                 contact.bodyB.node?.removeFromParent()
             } else {
@@ -109,12 +113,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
             //let sound = SKAction.playSoundFileNamed("coin.wav", waitForCompletion: false)
             //run(sound)
-
+            
+            // increment our score
             score += 1
 
             return
         }
 
+        // it's possible that two contacts are detected, player and box or vice versa
+        // the first time we detect a contact we remove the bar which would result in an error because the body that collided doesn't exist anymore
+        // therefore we cancel the function if one of the bodies doesn't exist
         guard contact.bodyA.node != nil && contact.bodyB.node != nil else {
             return
         }
@@ -137,61 +145,54 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func createRocks() {
-        // 1
+    func createObstacles(movingDuration: Int8) {
+        // save the texture of our image into a constant
+        let obstacleTexture = SKTexture(imageNamed: "redBox")
         
-        let rockTexture = SKTexture(imageNamed: "redBox")
-
-        //let topRock = SKSpriteNode(texture: rockTexture)
-        //topRock.zRotation = .pi
-        //topRock.xScale = -1.0
-
-        let rocc = SKSpriteNode(texture: rockTexture)
-        rocc.physicsBody = SKPhysicsBody(texture: rockTexture, size: rockTexture.size())
-        rocc.physicsBody?.isDynamic = false
-
-        //topRock.zPosition = 1
-        rocc.zPosition = 1
-        //rocc.zRotation = .pi/2
-
-        //2
-        let rockCollision = SKSpriteNode(color: UIColor.red, size: CGSize(width: frame.width, height: 32))
-        rockCollision.name = "scoreDetect"
-        rockCollision.physicsBody = SKPhysicsBody(rectangleOf: rockCollision.size)
-        rockCollision.physicsBody?.isDynamic = false
+        // create a sprite with physics body for our obastacle
+        let obstacle = SKSpriteNode(texture: obstacleTexture)
+        obstacle.physicsBody = SKPhysicsBody(texture: obstacleTexture, size: obstacleTexture.size())
+        // it's not dynamic because we don't want it to trigger a physics simulation when it colllides with something
+        obstacle.physicsBody?.isDynamic = false
         
-        rockCollision.zPosition = 1
+        // set a Z position so it is in fron the background
+        obstacle.zPosition = 1
         
-        //rockCollision.anchorPoint = CGPoint(x: 0.5, y: 0)
-        //rocc.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        // we could rotate the obstacle with this line of code
+        // obstacle.zRotation = .pi/2
+
+        // create a bar that moves with the object so we can keep count of the score when our player has contact with it
+        let ScoreCountBar = SKSpriteNode(color: UIColor.red, size: CGSize(width: frame.width, height: 32))
+        ScoreCountBar.name = "scoreDetect"
+        ScoreCountBar.physicsBody = SKPhysicsBody(rectangleOf: ScoreCountBar.size)
+        ScoreCountBar.physicsBody?.isDynamic = false
+        
+        ScoreCountBar.zPosition = 1
         
         //addChild(topRock)
-        addChild(rocc)
-        addChild(rockCollision)
+        addChild(obstacle)
+        addChild(ScoreCountBar)
 
-        // 3
-        //let yPosition = -frame.height/2
-
-        //let max = CGFloat(frame.height / 3)
+        // create a random x position for our obstacles
         let xPosition = CGFloat.random(in: -frame.width/2...frame.width/2)
+        
+        // place the obstacles and the score counting bar
+        obstacle.position = CGPoint(x: xPosition, y: -frame.height/2)
+        ScoreCountBar.position = CGPoint(x: 0, y: -frame.height/2 - (obstacle.size.height/2 + ScoreCountBar.size.height/2))
 
-        // 4
-        //topRock.position = CGPoint(x: xPosition, y: yPosition + topRock.size.height + rockDistance)
-        rocc.position = CGPoint(x: xPosition, y: -frame.height/2)//CGFloat(yPosition) - rockDistance)
-        rockCollision.position = CGPoint(x: 0, y: -frame.height/2 - (rocc.size.height/2 + rockCollision.size.height/2))
+        let endPosition = frame.height + obstacle.frame.height
 
-        let endPosition = frame.width + (rocc.frame.width * 2)
-
-        let moveAction = SKAction.moveBy(x: 0, y: endPosition, duration: 8)
+        // move the obstacle and the score bar upwards
+        let moveAction = SKAction.moveBy(x: 0, y: endPosition, duration: TimeInterval(movingDuration))
         let moveSequence = SKAction.sequence([moveAction, SKAction.removeFromParent()])
-        //topRock.run(moveSequence)
-        rocc.run(moveSequence)
-        rockCollision.run(moveSequence)
+        obstacle.run(moveSequence)
+        ScoreCountBar.run(moveSequence)
     }
     
-    func startRocks() {
+    // start creating an obstacle every three seconds
+    func startObstacles() {
         let create = SKAction.run { [unowned self] in
-            self.createRocks()
+            self.createObstacles(movingDuration: 1)
         }
 
         let wait = SKAction.wait(forDuration: 3)

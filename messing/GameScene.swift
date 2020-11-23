@@ -7,6 +7,8 @@
 
 import SpriteKit
 
+var last_state = CGPoint(x: 0, y: 0)
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var player: SKSpriteNode!
@@ -50,6 +52,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         createBGround()
         
         
+        
     }
     
     
@@ -80,6 +83,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             }
             
+            last_state.x = location.x
         }
     }
     
@@ -126,11 +130,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             }
             
+            last_state.x = location.x
         }
+        
+        
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
     }
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        if abs(last_state.x - player.position.x) < 30 {
+            player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        }
         moveBGround()
         
     }
@@ -242,6 +256,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
         run(repeatForever)
     }
+    
     
     func moveBGround(){
         // no idea how this works but it makes the background move somehow

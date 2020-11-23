@@ -43,10 +43,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
         physicsWorld.contactDelegate = self
         
+        
         createScore()
         createPlayer()
         startObstacles(obstacleFrequency: 3)
         createBGround()
+        
+        
     }
     
     
@@ -59,7 +62,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let location = touch.location(in: self)
             
-            player!.position.x = location.x
+            let velocityFactor: CGFloat = 5
+            
+            let playerVelocity = location.x - player.position.x
+            
+            if (playerVelocity) > 30 {
+                print(location.x - player!.position.x)
+                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+            }
+            
+            else if (playerVelocity) < -30 {
+                print(location.x - player!.position.x)
+                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+            }
+            
+            else {
+                player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            }
             
         }
     }
@@ -89,7 +108,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let location = touch.location(in: self)
             
-            player!.position.x = location.x
+            let velocityFactor: CGFloat = 5
+            
+            let playerVelocity = location.x - player.position.x
+            
+            if (playerVelocity) > 30 {
+                print(location.x - player!.position.x)
+                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+            }
+            
+            else if (playerVelocity) < -30 {
+                print(location.x - player!.position.x)
+                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+            }
+            
+            else {
+                player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            }
             
         }
     }
@@ -97,6 +132,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         moveBGround()
+        
     }
     
     // this function detects contact

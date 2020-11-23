@@ -67,24 +67,67 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let velocityFactor: CGFloat = 5
             
+            // adjust the player velocity according to how far the player is away from the touch location
             let playerVelocity = location.x - player.position.x
             
-            if (playerVelocity) > 30 {
+            // if the player is outside our designated deadzone move him towards the location of the touch
+            if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
                 print(location.x - player!.position.x)
                 player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
             }
             
-            else if (playerVelocity) < -30 {
-                print(location.x - player!.position.x)
-                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
-            }
-            
+            // don't move the player when he is in the deadzone
             else {
                 player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
             }
             
+            // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
             last_state.x = location.x
         }
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // I think runs the for loop for as many times as there are touches
+        for touch in touches {
+            
+            let location = touch.location(in: self)
+            
+            let velocityFactor: CGFloat = 5
+            
+            // adjust the player velocity according to how far the player is away from the touch location
+            let playerVelocity = location.x - player.position.x
+            
+            // if the player is outside our designated deadzone move him towards the location of the touch
+            if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
+                print(location.x - player!.position.x)
+                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+            }
+            
+            // don't move the player when he is in the deadzone
+            else {
+                player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+            }
+            
+            // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
+            last_state.x = location.x
+        }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // stop player movement if finger is lifted
+        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        // Called before each frame is rendered
+        // stop the player movement if the player is inside the deadzone
+        // necessary here because otherwise drift occurs when the touch is not moving
+        if abs(last_state.x - player.position.x) < 30 {
+            player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        }
+        
+        moveBGround()
+        
     }
     
     func createPlayer() {
@@ -103,50 +146,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody?.isDynamic = true
         player.physicsBody?.affectedByGravity = false;
         player.physicsBody?.collisionBitMask = 0
-    }
-    
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // I think runs the for loop for as many times as there are touches
-        for touch in touches {
-            
-            let location = touch.location(in: self)
-            
-            let velocityFactor: CGFloat = 5
-            
-            let playerVelocity = location.x - player.position.x
-            
-            if (playerVelocity) > 30 {
-                print(location.x - player!.position.x)
-                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
-            }
-            
-            else if (playerVelocity) < -30 {
-                print(location.x - player!.position.x)
-                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
-            }
-            
-            else {
-                player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-            }
-            
-            last_state.x = location.x
-        }
-        
-        
-    }
-    
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-    }
-    
-    override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-        if abs(last_state.x - player.position.x) < 30 {
-            player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        }
-        moveBGround()
-        
     }
     
     // this function detects contact

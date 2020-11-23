@@ -72,7 +72,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             // if the player is outside our designated deadzone move him towards the location of the touch
             if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
-                print(location.x - player!.position.x)
                 player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
             }
             
@@ -99,7 +98,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             // if the player is outside our designated deadzone move him towards the location of the touch
             if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
-                print(location.x - player!.position.x)
                 player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
             }
             

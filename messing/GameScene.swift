@@ -45,7 +45,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         createScore()
         createPlayer()
-        startObstacles(obstacleFrequency: 1.5)
+        startObstacles(obstacleFrequency: 3)
         createBGround()
     }
     
@@ -126,6 +126,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         guard contact.bodyA.node != nil && contact.bodyB.node != nil else {
             return
         }
+        
+        if contact.bodyA.node == player || contact.bodyB.node == player {
+            player.removeFromParent()
+            speed = 0
+        }
     }
     
     func createBGround(){
@@ -192,7 +197,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // start creating an obstacle every obstacleFrequency seconds
     func startObstacles(obstacleFrequency: Float16) {
         let create = SKAction.run { [unowned self] in
-            self.createObstacles(movingDuration: 1)
+            self.createObstacles(movingDuration: 6)
         }
 
         let wait = SKAction.wait(forDuration: TimeInterval(obstacleFrequency))

@@ -7,6 +7,19 @@
 
 import SpriteKit
 
+// create different game states for the menu
+enum GameState {
+    case showingLogo
+    case playing
+    case dead
+}
+
+// create three more variables for what is actually shown during the different game states
+var logo: SKSpriteNode!
+var gameOver: SKSpriteNode!
+// this gives the game state a default value
+var gameState = GameState.showingLogo
+
 var last_state = CGPoint(x: 0, y: 0)
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -48,10 +61,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         createScore()
         createPlayer()
-        startObstacles(obstacleFrequency: 3)
+        // startObstacles(obstacleFrequency: 3)
         createBGround()
         
-        
+        createLogos()
         
     }
     
@@ -61,28 +74,53 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         //player.physicsBody?.applyImpulse(CGVector(dx: 20000, dy: 0))
         
-        for touch in touches {
-            
-            let location = touch.location(in: self)
-            
-            let velocityFactor: CGFloat = 5
-            
-            // adjust the player velocity according to how far the player is away from the touch location
-            let playerVelocity = location.x - player.position.x
-            
-            // if the player is outside our designated deadzone move him towards the location of the touch
-            if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
-                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+        switch gameState {
+            case .showingLogo:
+                gameState = .playing
+
+                let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+                let remove = SKAction.removeFromParent()
+                let wait = SKAction.wait(forDuration: 0.5)
+                let activatePlayer = SKAction.run { [unowned self] in
+                    // self.player.physicsBody?.isDynamic = true
+                    startObstacles(obstacleFrequency: 3)
+                }
+
+                let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
+                logo.run(sequence)
+
+            case .playing:
+                for touch in touches {
+                    
+                    let location = touch.location(in: self)
+                    
+                    let velocityFactor: CGFloat = 5
+                    
+                    // adjust the player velocity according to how far the player is away from the touch location
+                    let playerVelocity = location.x - player.position.x
+                    
+                    // if the player is outside our designated deadzone move him towards the location of the touch
+                    if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
+                        player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+                    }
+                    
+                    // don't move the player when he is in the deadzone
+                    else {
+                        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                    }
+                    
+                    // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
+                    last_state.x = location.x
+                }
+
+            case .dead:
+                if let scene = GameScene(fileNamed: "GameScene") {
+                    scene.scaleMode = .aspectFill
+                    let transition = SKTransition.moveIn(with: SKTransitionDirection.right, duration: 1)
+                    view?.presentScene(scene, transition: transition)
+                    gameState = .showingLogo
+                }
             }
-            
-            // don't move the player when he is in the deadzone
-            else {
-                player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-            }
-            
-            // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
-            last_state.x = location.x
-        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -175,6 +213,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if contact.bodyA.node == player || contact.bodyB.node == player {
+            // this shows the gameover sprite when the player dies
+            gameOver.alpha = 1
+            gameState = .dead
+            // backgroundMusic.run(SKAction.stop())
+            
             player.removeFromParent()
             speed = 0
         }
@@ -269,5 +312,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 node.position.y -= (self.scene?.size.height)! * 3
             }
         }))
+    }
+    
+    // this function creates the buttons for the menus as sprites
+    func createLogos() {
+        // this is the logo that is show at the beginning of each game
+        // we should add a real menu with options here later
+        logo = SKSpriteNode(imageNamed: "logo")
+        logo.position = CGPoint(x: frame.midX, y: frame.midY)
+        logo.zPosition = 3
+        addChild(logo)
+        
+        // this is the gameover immage
+        // we should add game stats here
+        // maybe also a record board
+        gameOver = SKSpriteNode(imageNamed: "gameover")
+        gameOver.position = CGPoint(x: frame.midX, y: frame.midY)
+        gameOver.alpha = 0
+        gameOver.zPosition = 3
+        addChild(gameOver)
     }
 }

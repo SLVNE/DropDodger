@@ -76,7 +76,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // startObstacles(obstacleFrequency: 3)
         createBGround()
         
-        createLogos()
+        //It's 4AM, I don't remember why I put this here but it won't work without it
+        loadButtons()
         
     }
     
@@ -87,97 +88,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let location = touch.location(in: self)
             
-            // see if our settings button has been touched before we check anything else
-            if settingsButton.contains(location) && gameState != .fadeOutSettings {
-                gameState = .fadeInSettings
-            }
+            checkGameState(location: location)
             
-            switch gameState {
-                
-                case .dead:
-                    if let scene = GameScene(fileNamed: "GameScene") {
-                        scene.scaleMode = .aspectFill
-                        let transition = SKTransition.moveIn(with: SKTransitionDirection.up, duration: 0.5)
-                        view?.presentScene(scene, transition: transition)
-                        playing = false
-                        gameState = .firstScreen
-                    }
-            
-                case .firstScreen:
-                    gameState = .playing
-                    dead = false
-                    let fadeOut = SKAction.fadeOut(withDuration: 0.5)
-                    let remove = SKAction.removeFromParent()
-                    let wait = SKAction.wait(forDuration: 0.5)
-                    let activatePlayer = SKAction.run { [unowned self] in
-                        // self.player.physicsBody?.isDynamic = true
-                        startObstacles(obstacleFrequency: 3)
-                    }
-
-                    let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
-                    logo.run(sequence)
-                    
-                    playing = true
-                    addChild(player)
-
-                case .playing:
-                    if dead == true {
-                        gameState = .dead
-                        break
-                    }
-                        let velocityFactor: CGFloat = 5
-                        
-                        // adjust the player velocity according to how far the player is away from the touch location
-                        let playerVelocity = location.x - player.position.x
-                        
-                        // if the player is outside our designated deadzone move him towards the location of the touch
-                        if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
-                            player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
-                        }
-                        
-                        // don't move the player when he is in the deadzone
-                        else {
-                            player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-                        }
-                        
-                        // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
-                        last_state.x = location.x
-
-
-                case .fadeInSettings:
-                    // show our menu buttons
-                    addChild(playButton)
-                    addChild(disableVolumeButton)
-                    addChild(controlModeButton)
-                    
-                    gameState = .fadeOutSettings
-                    
-                    // add code to stop the game
-                    speed = 0
-                
-                case .fadeOutSettings:
-                        // if statement for the buttons
-                        if playButton.contains(location) {
-                            // hide our buttons
-                            playButton.removeFromParent()
-                            disableVolumeButton.removeFromParent()
-                            controlModeButton.removeFromParent()
-                            if dead == false {
-                                speed = 1
-                            }
-                            // change game state to playing
-                            
-                            if playing == false {
-                                gameState = .firstScreen
-                            }
-                            else if playing == true {
-                                gameState = .playing
-                                if dead == true {
-                                    gameState = .dead
-                                }
-                            }
-                        }
-            }
         }
     }
     
@@ -234,9 +146,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         player.setScale(0.3)
         player.position = CGPoint(x: 0, y: frame.height * 0.33)
-        
-        
-        //addChild(player)
         
         player.physicsBody = SKPhysicsBody(texture: playerTexture, size: player.size)
         player.physicsBody!.contactTestBitMask = player.physicsBody!.collisionBitMask
@@ -377,7 +286,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // this function creates the buttons for the menus as sprites
-    func createLogos() {
+    func loadButtons() {
         // this is the logo that is show at the beginning of each game
         // we should add a real menu with options here later
         logo = SKSpriteNode(imageNamed: "logo")
@@ -406,10 +315,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         settingsButton.position = settingsPosition
         addChild(settingsButton)
         
+        //load the buttons for the settings menu
         showSettings()
         
     }
     
+    //this function calls on the settings functions
     func showSettings() {
         // these are the buttons for our settings
         // this creates our play button and adds it invisibly
@@ -429,5 +340,104 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         controlModeButton.position = CGPoint(x: frame.midX, y: frame.midY - controlModeButton.size.height * 3)
         //disableVolumeButton.alpha = 0
         controlModeButton.zPosition = 4
+    }
+    
+    
+    //this function acts as the main switcher between states
+    func checkGameState(location: CGPoint){
+        
+        // see if our settings button has been touched before we check anything else
+        if settingsButton.contains(location) && gameState != .fadeOutSettings {
+            gameState = .fadeInSettings
+        }
+        
+        switch gameState {
+            
+            case .dead:
+                if let scene = GameScene(fileNamed: "GameScene") {
+                    scene.scaleMode = .aspectFill
+                    let transition = SKTransition.moveIn(with: SKTransitionDirection.up, duration: 0.5)
+                    view?.presentScene(scene, transition: transition)
+                    playing = false
+                    gameState = .firstScreen
+                }
+        
+            case .firstScreen:
+                gameState = .playing
+                dead = false
+                let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+                let remove = SKAction.removeFromParent()
+                let wait = SKAction.wait(forDuration: 0.5)
+                let activatePlayer = SKAction.run { [unowned self] in
+                    // self.player.physicsBody?.isDynamic = true
+                    startObstacles(obstacleFrequency: 3)
+                }
+
+                let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
+                logo.run(sequence)
+                
+                playing = true
+                addChild(player)
+
+            case .playing:
+                if dead == true {
+                    gameState = .dead
+                    break
+                }
+                    let velocityFactor: CGFloat = 5
+                    
+                    // adjust the player velocity according to how far the player is away from the touch location
+                    let playerVelocity = location.x - player.position.x
+                    
+                    // if the player is outside our designated deadzone move him towards the location of the touch
+                    if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
+                        player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+                    }
+                    
+                    // don't move the player when he is in the deadzone
+                    else {
+                        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                    }
+                    
+                    // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
+                    last_state.x = location.x
+
+
+            case .fadeInSettings:
+                // show our menu buttons
+                addChild(playButton)
+                addChild(disableVolumeButton)
+                addChild(controlModeButton)
+                logo.removeFromParent()
+                gameState = .fadeOutSettings
+                
+                // add code to stop the game
+                speed = 0
+            
+            case .fadeOutSettings:
+                    // if statement for the buttons
+                    if playButton.contains(location) {
+                        // hide our buttons
+                        playButton.removeFromParent()
+                        disableVolumeButton.removeFromParent()
+                        controlModeButton.removeFromParent()
+                        if dead == false {
+                            speed = 1
+                        }
+                        // change game state to playing
+                        
+                        if playing == false {
+                            gameState = .firstScreen
+                            addChild(logo)
+                        }
+                        else if playing == true {
+                            gameState = .playing
+                            if dead == true {
+                                gameState = .dead
+                            }
+                        }
+                    }
+        }
+        
     }
 }

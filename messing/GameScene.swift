@@ -12,11 +12,18 @@ enum GameState {
     case showingLogo
     case playing
     case dead
+    case fadeInSettings
+    case fadeOutSettings
 }
 
 // create three more variables for what is actually shown during the different game states
 var logo: SKSpriteNode!
 var gameOver: SKSpriteNode!
+var settingsButton: SKSpriteNode!
+var playButton: SKSpriteNode!
+var disableVolumeButton: SKSpriteNode!
+var controlModeButton: SKSpriteNode!
+
 // this gives the game state a default value
 var gameState = GameState.showingLogo
 
@@ -70,57 +77,84 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // I think runs the for loop for as many times as there are touches
-        //player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-        //player.physicsBody?.applyImpulse(CGVector(dx: 20000, dy: 0))
+        // runs each time there's a new touch detected
         
-        switch gameState {
-            case .showingLogo:
-                gameState = .playing
-
-                let fadeOut = SKAction.fadeOut(withDuration: 0.5)
-                let remove = SKAction.removeFromParent()
-                let wait = SKAction.wait(forDuration: 0.5)
-                let activatePlayer = SKAction.run { [unowned self] in
-                    // self.player.physicsBody?.isDynamic = true
-                    startObstacles(obstacleFrequency: 3)
-                }
-
-                let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
-                logo.run(sequence)
-
-            case .playing:
-                for touch in touches {
-                    
-                    let location = touch.location(in: self)
-                    
-                    let velocityFactor: CGFloat = 5
-                    
-                    // adjust the player velocity according to how far the player is away from the touch location
-                    let playerVelocity = location.x - player.position.x
-                    
-                    // if the player is outside our designated deadzone move him towards the location of the touch
-                    if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
-                        player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
-                    }
-                    
-                    // don't move the player when he is in the deadzone
-                    else {
-                        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-                    }
-                    
-                    // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
-                    last_state.x = location.x
-                }
-
-            case .dead:
-                if let scene = GameScene(fileNamed: "GameScene") {
-                    scene.scaleMode = .aspectFill
-                    let transition = SKTransition.moveIn(with: SKTransitionDirection.right, duration: 1)
-                    view?.presentScene(scene, transition: transition)
-                    gameState = .showingLogo
-                }
+        // get the location of the touch
+        for touch in touches {
+            let location = touch.location(in: self)
+            
+            // see if our settings button has been touched before we check anything else
+            if settingsButton.contains(location) {
+                gameState = .fadeInSettings
             }
+        
+            switch gameState {
+                case .showingLogo:
+                    gameState = .playing
+
+                    let fadeOut = SKAction.fadeOut(withDuration: 0.5)
+                    let remove = SKAction.removeFromParent()
+                    let wait = SKAction.wait(forDuration: 0.5)
+                    let activatePlayer = SKAction.run { [unowned self] in
+                        // self.player.physicsBody?.isDynamic = true
+                        startObstacles(obstacleFrequency: 3)
+                    }
+
+                    let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
+                    logo.run(sequence)
+
+                case .playing:
+                        let velocityFactor: CGFloat = 5
+                        
+                        // adjust the player velocity according to how far the player is away from the touch location
+                        let playerVelocity = location.x - player.position.x
+                        
+                        // if the player is outside our designated deadzone move him towards the location of the touch
+                        if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
+                            player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+                        }
+                        
+                        // don't move the player when he is in the deadzone
+                        else {
+                            player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                        }
+                        
+                        // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
+                        last_state.x = location.x
+
+                case .dead:
+                    if let scene = GameScene(fileNamed: "GameScene") {
+                        scene.scaleMode = .aspectFill
+                        let transition = SKTransition.moveIn(with: SKTransitionDirection.right, duration: 1)
+                        view?.presentScene(scene, transition: transition)
+                        gameState = .showingLogo
+                    }
+
+                case .fadeInSettings:
+                    // show our menu buttons
+                    addChild(playButton)
+                    addChild(disableVolumeButton)
+                    addChild(controlModeButton)
+                    
+                    gameState = .fadeOutSettings
+                    
+                    // add code to stop the game
+                    speed = 0
+                
+                case .fadeOutSettings:
+                        // if statement for the buttons
+                        if playButton.contains(location) {
+                            // hide our buttons
+                            playButton.removeFromParent()
+                            disableVolumeButton.removeFromParent()
+                            controlModeButton.removeFromParent()
+                            
+                            speed = 1
+                            // change game state to playing
+                            gameState = .showingLogo
+                        }
+            }
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -163,7 +197,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         moveBGround()
-        
     }
     
     func createPlayer() {
@@ -331,5 +364,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameOver.alpha = 0
         gameOver.zPosition = 3
         addChild(gameOver)
+        
+        // this is our settings button
+        settingsButton = SKSpriteNode(imageNamed: "settingsButton")
+        // make it semitransparent
+        settingsButton.alpha = 0.8
+        settingsButton.zPosition = 3
+        settingsButton.setScale(0.3)
+        // create a point in the right upper corner to put our settings button there
+        let settingsPosition = CGPoint(x: frame.maxX - settingsButton.size.width / 4, y: frame.maxY - settingsButton.size.width / 4)
+        //        (x: frame.size.width - (settingsButton.size.width, y: frame.size.height - settingsButton.size.height)
+        settingsButton.position = settingsPosition
+        addChild(settingsButton)
+        
+        // this are the buttons for our settings
+        // this creates our play button and adds it invisibly
+        playButton = SKSpriteNode(imageNamed: "playButton")
+        playButton.position = CGPoint(x: frame.midX, y: frame.midY + playButton.size.height)
+        //playButton.alpha = 0
+        playButton.zPosition = 3
+        
+        // this creates our disable volume button button and adds it invisibly
+        disableVolumeButton = SKSpriteNode(imageNamed: "disableVolumeButton")
+        disableVolumeButton.position = CGPoint(x: frame.midX, y: frame.midY - disableVolumeButton.size.height)
+        //disableVolumeButton.alpha = 0
+        disableVolumeButton.zPosition = 3
+        
+        // this creates our play button and adds it invisibly
+        controlModeButton = SKSpriteNode(imageNamed: "controlModeButton")
+        controlModeButton.position = CGPoint(x: frame.midX, y: frame.midY - controlModeButton.size.height)
+        //disableVolumeButton.alpha = 0
+        controlModeButton.zPosition = 3
     }
 }

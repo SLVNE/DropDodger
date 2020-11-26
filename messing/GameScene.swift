@@ -83,14 +83,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // runs each time there's a new touch detected
-        print(dead)
         // get the location of the touch
         for touch in touches {
             let location = touch.location(in: self)
-            
-            let previousState = gameState
-            
-            print(gameState)
             
             // see if our settings button has been touched before we check anything else
             if settingsButton.contains(location) && gameState != .fadeOutSettings {
@@ -168,19 +163,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             disableVolumeButton.removeFromParent()
                             controlModeButton.removeFromParent()
                             if dead == false {
-                                print(gameState)
-                                print(previousState)
                                 speed = 1
                             }
                             // change game state to playing
                             
                             if playing == false {
                                 gameState = .firstScreen
-                                print(gameState)
                             }
                             else if playing == true {
                                 gameState = .playing
-                                print(gameState)
                                 if dead == true {
                                     gameState = .dead
                                 }
@@ -239,7 +230,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func createPlayer() {
         let playerTexture = SKTexture(imageNamed: "redBall")
         player = SKSpriteNode(texture: playerTexture)
-        player.zPosition = 10
+        player.zPosition = 3
         player.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         player.setScale(0.3)
         player.position = CGPoint(x: 0, y: frame.height * 0.33)
@@ -422,21 +413,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func showSettings() {
         // these are the buttons for our settings
         // this creates our play button and adds it invisibly
-        playButton = SKSpriteNode(imageNamed: "playButton")
-        playButton.position = CGPoint(x: frame.midX, y: frame.midY + playButton.size.height/2)
+        playButton = SKSpriteNode(imageNamed: "resumeButton")
+        playButton.position = CGPoint(x: frame.midX, y: frame.midY)
         //playButton.alpha = 0
-        playButton.zPosition = 3
+        playButton.zPosition = 4
         
         // this creates our disable volume button button and adds it invisibly
         disableVolumeButton = SKSpriteNode(imageNamed: "disableVolumeButton")
-        disableVolumeButton.position = CGPoint(x: frame.midX, y: frame.midY - disableVolumeButton.size.height/2)
+        disableVolumeButton.position = CGPoint(x: frame.midX, y: frame.midY + disableVolumeButton.size.height * 3)
         //disableVolumeButton.alpha = 0
-        disableVolumeButton.zPosition = 3
+        disableVolumeButton.zPosition = 4
         
         // this creates our play button and adds it invisibly
         controlModeButton = SKSpriteNode(imageNamed: "controlModeButton")
-        controlModeButton.position = CGPoint(x: frame.midX, y: frame.midY - controlModeButton.size.height)
+        controlModeButton.position = CGPoint(x: frame.midX, y: frame.midY - controlModeButton.size.height * 3)
         //disableVolumeButton.alpha = 0
-        controlModeButton.zPosition = 3
+        controlModeButton.zPosition = 4
     }
 }

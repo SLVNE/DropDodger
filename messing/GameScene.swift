@@ -9,7 +9,7 @@ import SpriteKit
 
 // create different game states for the menu
 enum GameState {
-    case showingLogo
+    case firstScreen
     case playing
     case dead
     case fadeInSettings
@@ -25,9 +25,14 @@ var disableVolumeButton: SKSpriteNode!
 var controlModeButton: SKSpriteNode!
 
 // this gives the game state a default value
-var gameState = GameState.showingLogo
+var gameState = GameState.firstScreen
 
 var last_state = CGPoint(x: 0, y: 0)
+
+//these variables helped me debug the issues
+//and do some switching between states
+var dead = false
+var playing = false
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -78,20 +83,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // runs each time there's a new touch detected
-        
+        print(dead)
         // get the location of the touch
         for touch in touches {
             let location = touch.location(in: self)
             
+            let previousState = gameState
+            
+            print(gameState)
+            
             // see if our settings button has been touched before we check anything else
-            if settingsButton.contains(location) {
+            if settingsButton.contains(location) && gameState != .fadeOutSettings {
                 gameState = .fadeInSettings
             }
-        
+            
             switch gameState {
-                case .showingLogo:
+                
+                case .dead:
+                    if let scene = GameScene(fileNamed: "GameScene") {
+                        scene.scaleMode = .aspectFill
+                        let transition = SKTransition.moveIn(with: SKTransitionDirection.up, duration: 0.5)
+                        view?.presentScene(scene, transition: transition)
+                        playing = false
+                        gameState = .firstScreen
+                    }
+            
+                case .firstScreen:
                     gameState = .playing
-
+                    dead = false
                     let fadeOut = SKAction.fadeOut(withDuration: 0.5)
                     let remove = SKAction.removeFromParent()
                     let wait = SKAction.wait(forDuration: 0.5)
@@ -102,8 +121,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
                     let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
                     logo.run(sequence)
+                    
+                    playing = true
+                    addChild(player)
 
                 case .playing:
+                    if dead == true {
+                        gameState = .dead
+                        break
+                    }
                         let velocityFactor: CGFloat = 5
                         
                         // adjust the player velocity according to how far the player is away from the touch location
@@ -122,13 +148,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
                         last_state.x = location.x
 
-                case .dead:
-                    if let scene = GameScene(fileNamed: "GameScene") {
-                        scene.scaleMode = .aspectFill
-                        let transition = SKTransition.moveIn(with: SKTransitionDirection.right, duration: 1)
-                        view?.presentScene(scene, transition: transition)
-                        gameState = .showingLogo
-                    }
 
                 case .fadeInSettings:
                     // show our menu buttons
@@ -148,10 +167,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             playButton.removeFromParent()
                             disableVolumeButton.removeFromParent()
                             controlModeButton.removeFromParent()
-                            
-                            speed = 1
+                            if dead == false {
+                                print(gameState)
+                                print(previousState)
+                                speed = 1
+                            }
                             // change game state to playing
-                            gameState = .showingLogo
+                            
+                            if playing == false {
+                                gameState = .firstScreen
+                                print(gameState)
+                            }
+                            else if playing == true {
+                                gameState = .playing
+                                print(gameState)
+                                if dead == true {
+                                    gameState = .dead
+                                }
+                            }
                         }
             }
         }
@@ -196,6 +229,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         }
         
+        if gameState == .firstScreen {
+            dead = false
+        }
+        
         moveBGround()
     }
     
@@ -208,7 +245,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.position = CGPoint(x: 0, y: frame.height * 0.33)
         
         
-        addChild(player)
+        //addChild(player)
         
         player.physicsBody = SKPhysicsBody(texture: playerTexture, size: player.size)
         player.physicsBody!.contactTestBitMask = player.physicsBody!.collisionBitMask
@@ -249,6 +286,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // this shows the gameover sprite when the player dies
             gameOver.alpha = 1
             gameState = .dead
+            dead = true
             // backgroundMusic.run(SKAction.stop())
             
             player.removeFromParent()
@@ -377,16 +415,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         settingsButton.position = settingsPosition
         addChild(settingsButton)
         
-        // this are the buttons for our settings
+        showSettings()
+        
+    }
+    
+    func showSettings() {
+        // these are the buttons for our settings
         // this creates our play button and adds it invisibly
         playButton = SKSpriteNode(imageNamed: "playButton")
-        playButton.position = CGPoint(x: frame.midX, y: frame.midY + playButton.size.height)
+        playButton.position = CGPoint(x: frame.midX, y: frame.midY + playButton.size.height/2)
         //playButton.alpha = 0
         playButton.zPosition = 3
         
         // this creates our disable volume button button and adds it invisibly
         disableVolumeButton = SKSpriteNode(imageNamed: "disableVolumeButton")
-        disableVolumeButton.position = CGPoint(x: frame.midX, y: frame.midY - disableVolumeButton.size.height)
+        disableVolumeButton.position = CGPoint(x: frame.midX, y: frame.midY - disableVolumeButton.size.height/2)
         //disableVolumeButton.alpha = 0
         disableVolumeButton.zPosition = 3
         

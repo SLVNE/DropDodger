@@ -27,10 +27,11 @@ var controlModeButton: SKSpriteNode!
 // this gives the game state a default value
 var gameState = GameState.firstScreen
 
-var last_state = CGPoint(x: 0, y: 0)
+// this variable is used for the deadzone
+// the position of the last touch is stored in here to access it in the update function
+var lastState = CGPoint(x: 0, y: 0)
 
-//these variables helped me debug the issues
-//and do some switching between states
+// used to fix bugs with the change of game states when pausing the game
 var isDead = false
 var isPlaying = false
 
@@ -42,9 +43,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bground = SKSpriteNode()
     
     // create a local variable for our player
-    
     var scoreLabel: SKLabelNode!
-
+    
+    // initial setup of the score
     var score = 0 {
         didSet {
             scoreLabel.text = "SCORE: \(score)"
@@ -70,14 +71,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
         physicsWorld.contactDelegate = self
         
-        
+        // create all of our sprites
         createScore()
         createPlayer()
-        // startObstacles(obstacleFrequency: 3)
         createBGround()
-        
-        //It's 4AM, I don't remember why I put this here but it won't work without it
-        loadButtons()
+        createButtons()
         
     }
     
@@ -87,7 +85,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // get the location of the touch
         for touch in touches {
             let location = touch.location(in: self)
-            
+            // check the game state, react according to that (buttons or other interactions, like move the player, etc.)
             checkGameState(location: location)
             
         }
@@ -99,6 +97,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let location = touch.location(in: self)
             
+            // this is a factor that decides how fast the player sprite follows the user's touch
             let velocityFactor: CGFloat = 5
             
             // adjust the player velocity according to how far the player is away from the touch location
@@ -115,7 +114,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
-            last_state.x = location.x
+            lastState.x = location.x
         }
     }
     
@@ -128,10 +127,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Called before each frame is rendered
         // stop the player movement if the player is inside the deadzone
         // necessary here because otherwise drift occurs when the touch is not moving
-        if abs(last_state.x - player.position.x) < 30 {
+        if abs(lastState.x - player.position.x) < 30 {
             player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
         }
         
+        // resets isDead when it reaches the initial screen
         if gameState == .firstScreen {
             isDead = false
         }
@@ -182,6 +182,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return
         }
         
+        // check for contact with an obstacle
         if contact.bodyA.node == player || contact.bodyB.node == player {
             // this shows the gameover sprite when the player dies
             gameOver.alpha = 1
@@ -286,7 +287,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // this function creates the buttons for the menus as sprites
-    func loadButtons() {
+    func createButtons() {
         // this is the logo that is show at the beginning of each game
         // we should add a real menu with options here later
         logo = SKSpriteNode(imageNamed: "logo")
@@ -343,7 +344,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     
-    //this function acts as the main switcher between states
+    //this function acts as the main switcher between game states
     func checkGameState(location: CGPoint){
         
         // see if our settings button has been touched before we check anything else
@@ -351,11 +352,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             gameState = .fadeInSettings
         }
         
+        // we call this function in touchesBegin
         switch gameState {
-            
+        
             case .dead:
+                // if the game state is dead, reload the scene on a new touch
                 if let scene = GameScene(fileNamed: "GameScene") {
                     scene.scaleMode = .aspectFill
+                    // create the transition between the old and the new scene
                     let transition = SKTransition.moveIn(with: SKTransitionDirection.up, duration: 0.5)
                     view?.presentScene(scene, transition: transition)
                     isPlaying = false
@@ -363,44 +367,51 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
         
             case .firstScreen:
+                // initial screen with logo before each game, tap to play
                 gameState = .playing
                 isDead = false
                 let fadeOut = SKAction.fadeOut(withDuration: 0.5)
                 let remove = SKAction.removeFromParent()
                 let wait = SKAction.wait(forDuration: 0.5)
                 let activatePlayer = SKAction.run { [unowned self] in
-                    // self.player.physicsBody?.isDynamic = true
                     startObstacles(obstacleFrequency: 3)
                 }
-
+                
+                // create an action sequence that makes our logo fade out
                 let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
                 logo.run(sequence)
                 
+                // we started the game, so we change isPlaying according to that
                 isPlaying = true
+                
+                // add player to game scene
                 addChild(player)
 
             case .playing:
+                // move the player to the new touch
+                // check if the player is dead, if so change game state
                 if isDead == true {
                     gameState = .dead
                     break
                 }
-                    let velocityFactor: CGFloat = 5
-                    
-                    // adjust the player velocity according to how far the player is away from the touch location
-                    let playerVelocity = location.x - player.position.x
-                    
-                    // if the player is outside our designated deadzone move him towards the location of the touch
-                    if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
-                        player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
-                    }
-                    
-                    // don't move the player when he is in the deadzone
-                    else {
-                        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-                    }
-                    
-                    // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
-                    last_state.x = location.x
+                // factor to decide how fast the player moves towards the touch input
+                let velocityFactor: CGFloat = 5
+                
+                // adjust the player velocity according to how far the player is away from the touch location
+                let playerVelocity = location.x - player.position.x
+                
+                // if the player is outside our designated deadzone move him towards the location of the touch
+                if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
+                    player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+                }
+                
+                // don't move the player when he is in the deadzone
+                else {
+                    player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                }
+                
+                // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
+                lastState.x = location.x
 
 
             case .fadeInSettings:
@@ -411,10 +422,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 logo.removeFromParent()
                 gameState = .fadeOutSettings
                 
-                // add code to stop the game
+                // stop our physics simulation
                 speed = 0
             
             case .fadeOutSettings:
+                    // removes the settings buttons
                     // if statement for the buttons
                     if playButton.contains(location) {
                         // hide our buttons
@@ -424,8 +436,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         if isDead == false {
                             speed = 1
                         }
-                        // change game state to playing
                         
+                        // set the game state according to isPlaying and isDead
                         if isPlaying == false {
                             gameState = .firstScreen
                             addChild(logo)

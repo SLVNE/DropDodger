@@ -327,19 +327,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // this creates our play button and adds it invisibly
         playButton = SKSpriteNode(imageNamed: "resumeButton")
         playButton.position = CGPoint(x: frame.midX, y: frame.midY)
-        //playButton.alpha = 0
+        playButton.alpha = 0.9
         playButton.zPosition = 4
         
         // this creates our disable volume button button and adds it invisibly
         disableVolumeButton = SKSpriteNode(imageNamed: "disableVolumeButton")
         disableVolumeButton.position = CGPoint(x: frame.midX, y: frame.midY + disableVolumeButton.size.height * 3)
-        //disableVolumeButton.alpha = 0
+        disableVolumeButton.alpha = 0.9
         disableVolumeButton.zPosition = 4
         
         // this creates our play button and adds it invisibly
         controlModeButton = SKSpriteNode(imageNamed: "controlModeButton")
         controlModeButton.position = CGPoint(x: frame.midX, y: frame.midY - controlModeButton.size.height * 3)
-        //disableVolumeButton.alpha = 0
+        controlModeButton.alpha = 0.9
         controlModeButton.zPosition = 4
     }
     

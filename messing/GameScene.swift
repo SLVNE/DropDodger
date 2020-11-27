@@ -31,8 +31,8 @@ var last_state = CGPoint(x: 0, y: 0)
 
 //these variables helped me debug the issues
 //and do some switching between states
-var dead = false
-var playing = false
+var isDead = false
+var isPlaying = false
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -133,7 +133,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if gameState == .firstScreen {
-            dead = false
+            isDead = false
         }
         
         moveBGround()
@@ -186,7 +186,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // this shows the gameover sprite when the player dies
             gameOver.alpha = 1
             gameState = .dead
-            dead = true
+            isDead = true
             // backgroundMusic.run(SKAction.stop())
             
             player.removeFromParent()
@@ -358,13 +358,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     scene.scaleMode = .aspectFill
                     let transition = SKTransition.moveIn(with: SKTransitionDirection.up, duration: 0.5)
                     view?.presentScene(scene, transition: transition)
-                    playing = false
+                    isPlaying = false
                     gameState = .firstScreen
                 }
         
             case .firstScreen:
                 gameState = .playing
-                dead = false
+                isDead = false
                 let fadeOut = SKAction.fadeOut(withDuration: 0.5)
                 let remove = SKAction.removeFromParent()
                 let wait = SKAction.wait(forDuration: 0.5)
@@ -376,11 +376,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
                 logo.run(sequence)
                 
-                playing = true
+                isPlaying = true
                 addChild(player)
 
             case .playing:
-                if dead == true {
+                if isDead == true {
                     gameState = .dead
                     break
                 }
@@ -421,18 +421,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         playButton.removeFromParent()
                         disableVolumeButton.removeFromParent()
                         controlModeButton.removeFromParent()
-                        if dead == false {
+                        if isDead == false {
                             speed = 1
                         }
                         // change game state to playing
                         
-                        if playing == false {
+                        if isPlaying == false {
                             gameState = .firstScreen
                             addChild(logo)
                         }
-                        else if playing == true {
+                        else if isPlaying == true {
                             gameState = .playing
-                            if dead == true {
+                            if isDead == true {
                                 gameState = .dead
                             }
                         }

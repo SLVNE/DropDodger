@@ -71,6 +71,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
         physicsWorld.contactDelegate = self
         
+        //check for existing scores and set some defaults if none are present
+        initializeScore()
+        
         // create all of our sprites
         createScore()
         createPlayer()
@@ -192,6 +195,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             player.removeFromParent()
             speed = 0
+            
+            //add the score to storage
+            addScore()
+        }
+        guard contact.bodyA.node != nil && contact.bodyB.node != nil else {
+            return
         }
     }
     
@@ -451,5 +460,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
         }
         
+    }
+    
+    // check if the leaderboard and settings defaul values exist, if not, set them to out defaults
+    func initializeScore() {
+        
+        let defaults = UserDefaults.standard
+        
+        if defaults.array(forKey: "scoreBoard") == nil {
+            print("fuck")
+            let scoreBoard = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            defaults.set(scoreBoard, forKey: "scoreBoard")
+            
+            let nameBoard = ["", "", "", "", "", "", "", "", "", ""]
+            defaults.set(nameBoard, forKey: "nameBoard")
+        
+            let volumeDisabled = false
+            defaults.setValue(volumeDisabled, forKey: "volumeDisabled")
+            
+            let touchEnabled = true
+            defaults.setValue(touchEnabled, forKey: "touchEnabled")
+        }
+    }
+    
+    func addScore() {
+        // save the score in the storage
+        let defaults = UserDefaults.standard
+        //read our scoreBoard
+        var scoreBoard: [Int] = defaults.array(forKey: "scoreBoard") as? [Int] ?? [Int]()
+        
+        // if the current score is bigger than the last one, replace the lowest score with the other one
+        if score > scoreBoard[9] {
+            scoreBoard[9] = score
+            scoreBoard.sort(by: >)
+            defaults.set(scoreBoard, forKey: "scoreBoard")
+            print(scoreBoard)
+        }
     }
 }

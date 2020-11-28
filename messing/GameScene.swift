@@ -199,6 +199,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //add the score to storage
             addScore()
         }
+        // try to fix that two collisions are detected and the score gets created twice
+        // NEEDS TO BE FIXED
         guard contact.bodyA.node != nil && contact.bodyB.node != nil else {
             return
         }

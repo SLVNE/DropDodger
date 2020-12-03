@@ -159,6 +159,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     // this function detects contact
     func didBegin(_ contact: SKPhysicsContact) {
+        
+        // this line fixes the last accidental double writing of the score
+        if gameState == .dead {
+            return
+        }
+        
         // this figures out in which order the function returns the colliding bodies
         // that matters because we have to remove the right body
         if contact.bodyA.node?.name == "scoreDetect" || contact.bodyB.node?.name == "scoreDetect" {
@@ -200,10 +206,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             addScore()
         }
         // try to fix that two collisions are detected and the score gets created twice
-        // NEEDS TO BE FIXED
+        // NEEDS TO BE FIXED - update, it has been fixed
         guard contact.bodyA.node != nil && contact.bodyB.node != nil else {
             return
         }
+        
     }
     
     func createBGround(){
@@ -474,7 +481,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let scoreBoard = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             defaults.set(scoreBoard, forKey: "scoreBoard")
             
-            let nameBoard = ["", "", "", "", "", "", "", "", "", ""]
+            let nameBoard = ["test", "test", "test", "test", "test", "test", "test", "test", "test", "test"]
             defaults.set(nameBoard, forKey: "nameBoard")
         
             let volumeDisabled = false
@@ -490,13 +497,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let defaults = UserDefaults.standard
         //read our scoreBoard
         var scoreBoard: [Int] = defaults.array(forKey: "scoreBoard") as? [Int] ?? [Int]()
-        
+        var nameBoard: [String] = defaults.array(forKey: "nameBoard") as? [String] ?? [String]()
         // if the current score is bigger than the last one, replace the lowest score with the other one
         if score > scoreBoard[9] {
             scoreBoard[9] = score
             scoreBoard.sort(by: >)
+            
+            // this loop checks for the index of the newly added score (after sorting)
+            // and adds the player name to the same index but in the nameBoard array
+            for counter in 0...9 {
+                if scoreBoard[counter] == score {
+                    nameBoard.insert(("New Player" + String(score)), at: counter)
+                    nameBoard.remove(at: 10)
+                    break
+                }
+            }
             defaults.set(scoreBoard, forKey: "scoreBoard")
+            defaults.set(nameBoard, forKey: "nameBoard")
             print(scoreBoard)
+            print(nameBoard)
         }
     }
 }

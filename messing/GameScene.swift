@@ -80,6 +80,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         createBGround()
         createButtons()
         
+        // print our leaderboard on the first screen
+        printLeaderboard()
     }
     
     
@@ -204,6 +206,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //add the score to storage
             addScore()
+            
+            // print our leaderboard
+            printLeaderboard()
         }
         // try to fix that two collisions are detected and the score gets created twice
         // NEEDS TO BE FIXED - update, it has been fixed
@@ -397,6 +402,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 // create an action sequence that makes our logo fade out
                 let sequence = SKAction.sequence([fadeOut, wait, activatePlayer, remove])
+                headerLabel.run(SKAction.sequence([fadeOut, wait, remove]))
+                // remove the leaderboard
+                enumerateChildNodes(withName: "scoreLineLabel") { (node, _) in
+                     node.run(SKAction.sequence([fadeOut, wait, remove]))
+                }
+                
+                //scoreLineLabel.run(SKAction.sequence([fadeOut, wait, remove]))
                 logo.run(sequence)
                 
                 // we started the game, so we change isPlaying according to that
@@ -514,8 +526,53 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             defaults.set(scoreBoard, forKey: "scoreBoard")
             defaults.set(nameBoard, forKey: "nameBoard")
+            // just some debugging
             print(scoreBoard)
             print(nameBoard)
+        }
+    }
+    
+    // this probably uses an unnecessary amount of memory but otherwise I always run into scope issues
+    // variables for label nodes for the leaderboard labels
+    var headerLabel: SKLabelNode!
+    var scoreLineLabel: SKLabelNode!
+    
+    func printLeaderboard(){
+        // save the score in the storage
+        let defaults = UserDefaults.standard
+        //read our scoreBoard
+        let scoreBoard: [Int] = defaults.array(forKey: "scoreBoard") as? [Int] ?? [Int]()
+        let nameBoard: [String] = defaults.array(forKey: "nameBoard") as? [String] ?? [String]()
+        var leaderboard: [String] = []
+        for i in 0...scoreBoard.count - 1 {
+            leaderboard.append((String(i + 1) + ".").padding(toLength: 6, withPad: " ", startingAt: 0) + String(scoreBoard[i]).padding(toLength: 10, withPad: " ", startingAt: 0) + nameBoard[i].padding(toLength: 10, withPad: " ", startingAt: 0))
+            // just debugging
+            print(leaderboard[i])
+        }
+        
+        // formatting is a little off becuase apple doesn't provide a way to use a monospaced font with an SKLabel node
+        // print the header label once
+        headerLabel = SKLabelNode(fontNamed: "Optima-ExtraBlack")
+        headerLabel.fontSize = 36
+        headerLabel.position = CGPoint(x: frame.midX, y: frame.midY - logo.size.height / 1.5)
+        headerLabel.text = "Place Score Name".padding(toLength: 26, withPad: " ", startingAt: 0)
+        headerLabel.fontColor = UIColor.black
+        headerLabel.zPosition = 2
+        addChild(headerLabel)
+        
+        for i in 0...scoreBoard.count - 1 {
+            // function to print the leaderboard
+            // create the place label
+            scoreLineLabel = SKLabelNode(fontNamed: "Optima-ExtraBlack")
+            scoreLineLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+            scoreLineLabel.fontSize = 36
+            scoreLineLabel.text = leaderboard[i]
+            // can't do it dynamically, meaning there's no way to allign it in the middle
+            scoreLineLabel.position = CGPoint(x: frame.midX - 200, y: headerLabel.position.y - CGFloat((i + 1) * 40))
+            scoreLineLabel.fontColor = UIColor.black
+            scoreLineLabel.zPosition = 2
+            scoreLineLabel.name = "scoreLineLabel"
+            addChild(scoreLineLabel)
         }
     }
 }

@@ -93,6 +93,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let waitShortLogo = SKAction.wait(forDuration: 3.5)
         let sequenceLogo = SKAction.repeatForever(SKAction.sequence([fadeInLogo, waitShortLogo, fadeOutLogo, waitLongTap]))
         // make the tap to play icon blink
+        // not very elegant but simple
         let fadeInTap = SKAction.fadeIn(withDuration: 0.5)
         let fadeOutTap = SKAction.fadeOut(withDuration: 0.5)
         let sequenceTap = SKAction.repeatForever(SKAction.sequence([waitLongLogo, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap]))
@@ -435,6 +436,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 //scoreLineLabel.run(SKAction.sequence([fadeOut, wait, remove]))
                 logo.run(sequence)
+                tapToPlay.run(SKAction.sequence([fadeOut, wait, remove]))
                 
                 // we started the game, so we change isPlaying according to that
                 isPlaying = true
@@ -475,6 +477,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 addChild(disableVolumeButton)
                 addChild(controlModeButton)
                 logo.removeFromParent()
+                tapToPlay.removeFromParent()
                 gameState = .fadeOutSettings
                 
                 // stop our physics simulation

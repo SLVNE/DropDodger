@@ -23,6 +23,7 @@ var settingsButton: SKSpriteNode!
 var playButton: SKSpriteNode!
 var disableVolumeButton: SKSpriteNode!
 var controlModeButton: SKSpriteNode!
+var tapToPlay: SKSpriteNode!
 
 // this gives the game state a default value
 var gameState = GameState.firstScreen
@@ -78,10 +79,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         createScore()
         createPlayer()
         createBGround()
+        // createbuttons also prints logo and tap to play icon
         createButtons()
         
         // print our leaderboard on the first screen
         printLeaderboard()
+        
+        // make the logo and the tap to play icon fade in alternating
+        let fadeInLogo = SKAction.fadeIn(withDuration: 3)
+        let fadeOutLogo = SKAction.fadeOut(withDuration: 1.5)
+        let waitLongLogo = SKAction.wait(forDuration: 8)
+        let waitLongTap = SKAction.wait(forDuration: 10)
+        let waitShortLogo = SKAction.wait(forDuration: 3.5)
+        let sequenceLogo = SKAction.repeatForever(SKAction.sequence([fadeInLogo, waitShortLogo, fadeOutLogo, waitLongTap]))
+        // make the tap to play icon blink
+        let fadeInTap = SKAction.fadeIn(withDuration: 0.5)
+        let fadeOutTap = SKAction.fadeOut(withDuration: 0.5)
+        let sequenceTap = SKAction.repeatForever(SKAction.sequence([waitLongLogo, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap]))
+        logo.run(sequenceLogo)
+        tapToPlay.run(sequenceTap)
     }
     
     
@@ -317,6 +333,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         logo.position = CGPoint(x: frame.midX, y: frame.midY)
         logo.zPosition = 3
         addChild(logo)
+        
+        // add a tap to play icon that get animated in the first screen
+        tapToPlay = SKSpriteNode(imageNamed: "tapToPlay")
+        tapToPlay.position = CGPoint(x: frame.midX, y: frame.midY)
+        tapToPlay.zPosition = 3
+        // make it invisible at first
+        tapToPlay.setScale(0.5)
+        tapToPlay.alpha = 0
+        addChild(tapToPlay)
         
         // this is the gameover immage
         // we should add game stats here

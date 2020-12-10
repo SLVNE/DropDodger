@@ -6,6 +6,11 @@
 //  Restructuring and physics update by Silvian Ene on 19.11.20.
 
 import SpriteKit
+// import this for the tilt control, gives us access to the accelerometer
+import CoreMotion
+
+// this is for the tilt control
+var motionManager: CMMotionManager!
 
 // create different game states for the menu
 enum GameState {
@@ -35,6 +40,9 @@ var lastState = CGPoint(x: 0, y: 0)
 // used to fix bugs with the change of game states when pausing the game
 var isDead = false
 var isPlaying = false
+
+// variable to know which control mode is currently used
+var touchControl = true
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -71,6 +79,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
        
         //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
         physicsWorld.contactDelegate = self
+        
+        // check which control mode is used and save it into the variable touchControl
+        let defaults = UserDefaults.standard
+        touchControl = defaults.bool(forKey: "touchEnabled") //as? [Bool] ?? [Bool]()
+        // intialize accelerometer if necessary
+        if !touchControl {
+            motionManager = CMMotionManager()
+            motionManager.startAccelerometerUpdates()
+        }
         
         //check for existing scores and set some defaults if none are present
         initializeScore()
@@ -115,34 +132,40 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         // I think runs the for loop for as many times as there are touches
-        for touch in touches {
-            
-            let location = touch.location(in: self)
-            
-            // this is a factor that decides how fast the player sprite follows the user's touch
-            let velocityFactor: CGFloat = 5
-            
-            // adjust the player velocity according to how far the player is away from the touch location
-            let playerVelocity = location.x - player.position.x
-            
-            // if the player is outside our designated deadzone move him towards the location of the touch
-            if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
-                player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+        // move our player with touch if that's the current control mode
+        if touchControl {
+            for touch in touches {
+                
+                let location = touch.location(in: self)
+                
+                // this is a factor that decides how fast the player sprite follows the user's touch
+                let velocityFactor: CGFloat = 5
+                
+                // adjust the player velocity according to how far the player is away from the touch location
+                let playerVelocity = location.x - player.position.x
+                
+                // if the player is outside our designated deadzone move him towards the location of the touch
+                if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
+                    player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+                }
+                
+                // don't move the player when he is in the deadzone
+                else {
+                    player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                }
+                
+                // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
+                lastState.x = location.x
             }
-            
-            // don't move the player when he is in the deadzone
-            else {
-                player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-            }
-            
-            // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
-            lastState.x = location.x
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        // stop player movement if finger is lifted
-        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        // only stop it if we're using touch controls
+        if touchControl {
+            // stop player movement if finger is lifted
+            player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -159,6 +182,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         moveBGround()
+        
+        // use tilt control if enabled
+        if !touchControl {
+            if let accelerometerData = motionManager.accelerometerData {
+                let velocityFactor: Double = 5000
+                let acceleration = accelerometerData.acceleration.x * velocityFactor
+                // only move the player if the acceleration is above a certain treshold, meaning the following line introduces a deadzone so the player doesn't move around when there's accelerometer drift
+                if abs(acceleration) > 100 {
+                    player.physicsBody?.velocity = CGVector(dx: Int(acceleration), dy: 0)
+                }
+                // we need to update the lastState so the deadzone at the begginning of the update function gets true and stops the player
+                // otherwise the deadzone we just introduced would leave the player at his last velocity
+                lastState.x = player.position.x
+                // debugging
+                print(Int(acceleration))
+            }
+        }
     }
     
     func createPlayer() {
@@ -219,7 +259,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // backgroundMusic.run(SKAction.stop())
             
             player.removeFromParent()
-            speed = 0
+            self.isPaused = true
+            //speed = 0
             
             //add the score to storage
             addScore()
@@ -399,6 +440,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // see if our settings button has been touched before we check anything else
         if settingsButton.contains(location) && gameState != .fadeOutSettings {
             gameState = .fadeInSettings
+            //speed = 0
+            self.isPaused = true
         }
         
         // we call this function in touchesBegin
@@ -451,24 +494,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     gameState = .dead
                     break
                 }
-                // factor to decide how fast the player moves towards the touch input
-                let velocityFactor: CGFloat = 5
                 
-                // adjust the player velocity according to how far the player is away from the touch location
-                let playerVelocity = location.x - player.position.x
+                // only use touch controls if that's our setting
+                if touchControl {
+                    // factor to decide how fast the player moves towards the touch input
+                    let velocityFactor: CGFloat = 5
+                    
+                    // adjust the player velocity according to how far the player is away from the touch location
+                    let playerVelocity = location.x - player.position.x
+                    
+                    // if the player is outside our designated deadzone move him towards the location of the touch
+                    if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
+                        player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+                    }
+                    
+                    // don't move the player when he is in the deadzone
+                    else {
+                        player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
+                    }
                 
-                // if the player is outside our designated deadzone move him towards the location of the touch
-                if ((playerVelocity) > 30 || (playerVelocity) < -30 ){
-                    player.physicsBody?.velocity = CGVector(dx: velocityFactor * playerVelocity, dy: 0.0)
+                    // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
+                    lastState.x = location.x
                 }
-                
-                // don't move the player when he is in the deadzone
-                else {
-                    player.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-                }
-                
-                // save the last location so we can call it in the update function in order to stop the player movement as he approaches the deazone when the touch is not moving
-                lastState.x = location.x
 
 
             case .fadeInSettings:
@@ -481,37 +528,63 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 gameState = .fadeOutSettings
                 
                 // stop our physics simulation
-                speed = 0
+                //speed = 0
+                self.isPaused = true
             
             case .fadeOutSettings:
-                    // removes the settings buttons
-                    // if statement for the buttons
-                    if playButton.contains(location) {
-                        // hide our buttons
-                        playButton.removeFromParent()
-                        disableVolumeButton.removeFromParent()
-                        controlModeButton.removeFromParent()
-                        if isDead == false {
-                            speed = 1
-                        }
-                        
-                        // set the game state according to isPlaying and isDead
-                        if isPlaying == false {
-                            gameState = .firstScreen
-                            addChild(logo)
-                        }
-                        else if isPlaying == true {
-                            gameState = .playing
-                            if isDead == true {
-                                gameState = .dead
-                            }
+                // removes the settings buttons
+                // if statement for the buttons
+                // if resume button is pressed:
+                if playButton.contains(location) {
+                    // hide our buttons
+                    playButton.removeFromParent()
+                    disableVolumeButton.removeFromParent()
+                    controlModeButton.removeFromParent()
+                    if isDead == false {
+                        //speed = 1
+                        self.isPaused = false
+                    }
+                    
+                    // set the game state according to isPlaying and isDead
+                    if isPlaying == false {
+                        gameState = .firstScreen
+                        addChild(logo)
+                    }
+                    else if isPlaying == true {
+                        gameState = .playing
+                        if isDead == true {
+                            gameState = .dead
                         }
                     }
+                }
+                // if control mode button is pressed
+                else if controlModeButton.contains(location) {
+                    let defaults = UserDefaults.standard
+                    touchControl = defaults.bool(forKey: "touchEnabled")
+                    // if it's false toggle it to switch it to true and vice versa
+                    touchControl.toggle()
+                    defaults.setValue(touchControl, forKey: "touchEnabled")
+                    
+                    // debugging
+                    print(touchControl)
+                    
+                    // if our control mode is tilt, start collecting accelerometer data
+                    // else means it's touch and then we stop collecting accelerometer data
+                    if !touchControl {
+                        motionManager = CMMotionManager()
+                        motionManager.startAccelerometerUpdates()
+                    }
+                    else {
+                        motionManager.stopAccelerometerUpdates()
+                    }
+                    
+                    // add code here to switch images
+                }
         }
         
     }
     
-    // check if the leaderboard and settings defaul values exist, if not, set them to out defaults
+    // check if the leaderboard and settings default values exist, if not, set them to our defaults
     func initializeScore() {
         
         let defaults = UserDefaults.standard

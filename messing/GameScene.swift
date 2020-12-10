@@ -102,6 +102,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // print our leaderboard on the first screen
         printLeaderboard()
         
+        
         // make the logo and the tap to play icon fade in alternating
         let fadeInLogo = SKAction.fadeIn(withDuration: 3)
         let fadeOutLogo = SKAction.fadeOut(withDuration: 1.5)
@@ -114,7 +115,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let fadeInTap = SKAction.fadeIn(withDuration: 0.5)
         let fadeOutTap = SKAction.fadeOut(withDuration: 0.5)
         let sequenceTap = SKAction.repeatForever(SKAction.sequence([waitLongLogo, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap, fadeInTap, fadeOutTap]))
+        
         logo.run(sequenceLogo)
+        headerLabel.run(sequenceLogo)
+        enumerateChildNodes(withName: "scoreLineLabel") { (node, _) in
+             node.run(sequenceLogo)
+        }
         tapToPlay.run(sequenceTap)
     }
     
@@ -372,7 +378,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // this is the logo that is show at the beginning of each game
         // we should add a real menu with options here later
         logo = SKSpriteNode(imageNamed: "logo")
-        logo.position = CGPoint(x: frame.midX, y: frame.midY)
+        logo.position = CGPoint(x: frame.midX, y: frame.maxY/4)
         logo.zPosition = 3
         addChild(logo)
         
@@ -645,18 +651,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let scoreBoard: [Int] = defaults.array(forKey: "scoreBoard") as? [Int] ?? [Int]()
         let nameBoard: [String] = defaults.array(forKey: "nameBoard") as? [String] ?? [String]()
         var leaderboard: [String] = []
-        for i in 0...scoreBoard.count - 1 {
-            leaderboard.append((String(i + 1) + ".").padding(toLength: 6, withPad: " ", startingAt: 0) + String(scoreBoard[i]).padding(toLength: 10, withPad: " ", startingAt: 0) + nameBoard[i].padding(toLength: 10, withPad: " ", startingAt: 0))
+        for i in 0...scoreBoard.count - 2 {
+            leaderboard.append((String(i + 1) + ".").padding(toLength: 7, withPad: " ", startingAt: 0) + String(scoreBoard[i]).padding(toLength: 10, withPad: " ", startingAt: 0) + nameBoard[i].padding(toLength: 10, withPad: " ", startingAt: 0))
             // just debugging
-            print(leaderboard[i])
+            //print(leaderboard[i])
         }
+        leaderboard.append((String(10) + ".").padding(toLength: 6, withPad: " ", startingAt: 0) + String(scoreBoard[9]).padding(toLength: 10, withPad: " ", startingAt: 0) + nameBoard[9].padding(toLength: 10, withPad: " ", startingAt: 0))
         
         // formatting is a little off becuase apple doesn't provide a way to use a monospaced font with an SKLabel node
         // print the header label once
         headerLabel = SKLabelNode(fontNamed: "Optima-ExtraBlack")
-        headerLabel.fontSize = 36
-        headerLabel.position = CGPoint(x: frame.midX, y: frame.midY - logo.size.height / 1.5)
-        headerLabel.text = "Place Score Name".padding(toLength: 26, withPad: " ", startingAt: 0)
+        headerLabel.fontSize = 52
+        headerLabel.position = CGPoint(x: frame.midX, y: frame.maxY/3 - logo.size.height/0.9)
+        headerLabel.text = "Top 10 Best Scores".padding(toLength: 26, withPad: " ", startingAt: 0)
         headerLabel.fontColor = UIColor.black
         headerLabel.zPosition = 2
         addChild(headerLabel)
@@ -666,10 +673,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // create the place label
             scoreLineLabel = SKLabelNode(fontNamed: "Optima-ExtraBlack")
             scoreLineLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
-            scoreLineLabel.fontSize = 36
+            scoreLineLabel.fontSize = 40
             scoreLineLabel.text = leaderboard[i]
             // can't do it dynamically, meaning there's no way to allign it in the middle
-            scoreLineLabel.position = CGPoint(x: frame.midX - 200, y: headerLabel.position.y - CGFloat((i + 1) * 40))
+            scoreLineLabel.position = CGPoint(x: frame.midX - 225, y: headerLabel.position.y * 1.3 - CGFloat((i + 1) * 40))
             scoreLineLabel.fontColor = UIColor.black
             scoreLineLabel.zPosition = 2
             scoreLineLabel.name = "scoreLineLabel"

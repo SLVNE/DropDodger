@@ -79,7 +79,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
        
         //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
         physicsWorld.contactDelegate = self
-        
+        initializeScore()
         // check which control mode is used and save it into the variable touchControl
         let defaults = UserDefaults.standard
         touchControl = defaults.bool(forKey: "touchEnabled") //as? [Bool] ?? [Bool]()
@@ -90,7 +90,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         //check for existing scores and set some defaults if none are present
-        initializeScore()
+        
         
         // create all of our sprites
         createScore()
@@ -195,7 +195,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let velocityFactor: Double = 5000
                 let acceleration = accelerometerData.acceleration.x * velocityFactor
                 // only move the player if the acceleration is above a certain treshold, meaning the following line introduces a deadzone so the player doesn't move around when there's accelerometer drift
-                if abs(acceleration) > 100 {
+                if abs(acceleration) > 150 {
                     player.physicsBody?.velocity = CGVector(dx: Int(acceleration), dy: 0)
                 }
                 // we need to update the lastState so the deadzone at the begginning of the update function gets true and stops the player

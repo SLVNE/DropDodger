@@ -31,19 +31,21 @@ class GameViewController: UIViewController {
             view.showsPhysics = true
         }
     }
-
+    
+    // making this return false disables automatic rotation, meaning for us that only home button on the bottom is supported
     override var shouldAutorotate: Bool {
-        return true
+        return false
     }
-
-    /*override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    
+    // following code only gets called when shouldAutorotate returns true
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
             return .allButUpsideDown
         } else {
             return .all
         }
     }
-    we changed the supported orientations in info.plist but we are not brave enough to delete this lines of code*/
+    //we changed the supported orientations in info.plist but we are not brave enough to delete this lines of code*/
 
     override var prefersStatusBarHidden: Bool {
         return true

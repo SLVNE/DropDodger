@@ -351,15 +351,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let initialSpeed = 6.00
             let obstacleSpeedFactor = 0.1
             let obstacleSpeed = initialSpeed / (Double(score) * obstacleSpeedFactor + 1)
+            print("speed is: ", obstacleSpeed)
             self.createObstacles(movingDuration: obstacleSpeed)
         }
         
-        // continue working here, no idea if this actually increases the frequency or not, couldn't finish testing
-        let obstacleFrequencyFactor = 0.5
-        let obstacleFrequency = initialObstacleFrequency / (Double(score) * obstacleFrequencyFactor + 1)
-        
-        let wait = SKAction.wait(forDuration: TimeInterval(obstacleFrequency))
-        let sequence = SKAction.sequence([create, wait])
+        /*var obstacleFrequency = [3.00]
+        // this part does not work... this code gets stuck in an infinite loop and I don't understand why
+        let changeFrequency = SKAction.run { [unowned self] in
+            let obstacleFrequencyFactor = 0.5
+            obstacleFrequency [0] = initialObstacleFrequency / (Double(score) * obstacleFrequencyFactor + 1)
+            print("frequency inside the run is: ", obstacleFrequency [0])
+            let wait = SKAction.wait(forDuration: TimeInterval(obstacleFrequency [0]))
+            run(wait)
+        }*/
+        let wait = SKAction.wait(forDuration: 3)
+        // unfortunately this part of the code only gets executed once, at this point the frequency changes and gets faster but I'm unable to update the wait
+        // I tried putting the wait inside the function but then we get stuck in an infinite loop and I can't seem to fix it
+        //let wait = SKAction.wait(forDuration: TimeInterval(obstacleFrequency [0]))
+        //print("frequency outside the run is: ", obstacleFrequency [0])
+        let sequence = SKAction.sequence([create, /*changeFrequency,*/ wait])
         let repeatForever = SKAction.repeatForever(sequence)
 
         run(repeatForever)

@@ -299,7 +299,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func createObstacles(movingDuration: Int8) {
+    func createObstacles(movingDuration: Double) {
         // save the texture of our image into a constant
         let obstacleTexture = SKTexture(imageNamed: "redBox")
         
@@ -344,11 +344,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // start creating an obstacle every obstacleFrequency seconds
-    func startObstacles(obstacleFrequency: Float16) {
+    // I tested with breakpoints and this gets run everytime when a new obstacle comes up
+    // that's why we can adjust the speed of our obstacles here as the score increases
+    func startObstacles(initialObstacleFrequency: Double) {
         let create = SKAction.run { [unowned self] in
-            self.createObstacles(movingDuration: 6)
+            let initialSpeed = 6.00
+            let obstacleSpeedFactor = 0.1
+            let obstacleSpeed = initialSpeed / (Double(score) * obstacleSpeedFactor + 1)
+            self.createObstacles(movingDuration: obstacleSpeed)
         }
-
+        
+        // continue working here, no idea if this actually increases the frequency or not, couldn't finish testing
+        let obstacleFrequencyFactor = 0.5
+        let obstacleFrequency = initialObstacleFrequency / (Double(score) * obstacleFrequencyFactor + 1)
+        
         let wait = SKAction.wait(forDuration: TimeInterval(obstacleFrequency))
         let sequence = SKAction.sequence([create, wait])
         let repeatForever = SKAction.repeatForever(sequence)
@@ -472,7 +481,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let remove = SKAction.removeFromParent()
                 let wait = SKAction.wait(forDuration: 0.5)
                 let activatePlayer = SKAction.run { [unowned self] in
-                    startObstacles(obstacleFrequency: 3)
+                    startObstacles(initialObstacleFrequency: 3)
                 }
                 
                 // create an action sequence that makes our logo fade out

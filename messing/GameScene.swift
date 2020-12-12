@@ -80,6 +80,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //physicsWorld.gravity = CGVector(dx: 0.0, dy: -5.0)
         physicsWorld.contactDelegate = self
         
+        //check for existing scores and set some defaults if none are present
+        initializeScore()
+        
         // check which control mode is used and save it into the variable touchControl
         let defaults = UserDefaults.standard
         touchControl = defaults.bool(forKey: "touchEnabled") //as? [Bool] ?? [Bool]()
@@ -88,9 +91,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             motionManager = CMMotionManager()
             motionManager.startAccelerometerUpdates()
         }
-        
-        //check for existing scores and set some defaults if none are present
-        initializeScore()
         
         // create all of our sprites
         createScore()
@@ -473,6 +473,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // see if our settings button has been touched before we check anything else
         if settingsButton.contains(location) && gameState != .fadeOutSettings {
+            
             gameState = .fadeInSettings
             //speed = 0
             self.isPaused = true
@@ -494,6 +495,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
             case .firstScreen:
                 // initial screen with logo before each game, tap to play
+                
                 gameState = .playing
                 isDead = false
                 let fadeOut = SKAction.fadeOut(withDuration: 0.5)
@@ -557,8 +559,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 addChild(playButton)
                 addChild(disableVolumeButton)
                 addChild(controlModeButton)
-                logo.removeFromParent()
-                tapToPlay.removeFromParent()
+                logo.zPosition = -1
+                tapToPlay.zPosition = -1
+                headerLabel.zPosition = -1
+                enumerateChildNodes(withName: "scoreLineLabel") { (node, _) in
+                     node.zPosition = -1
+                }
                 gameState = .fadeOutSettings
                 
                 // stop our physics simulation
@@ -582,7 +588,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     // set the game state according to isPlaying and isDead
                     if isPlaying == false {
                         gameState = .firstScreen
-                        addChild(logo)
+                        logo.zPosition = 4
+                        tapToPlay.zPosition = 4
+                        headerLabel.zPosition = 2
+                        enumerateChildNodes(withName: "scoreLineLabel") { (node, _) in
+                             node.zPosition = 2
+                        }
                     }
                     else if isPlaying == true {
                         gameState = .playing

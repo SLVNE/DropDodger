@@ -500,7 +500,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 isDead = false
                 let fadeOut = SKAction.fadeOut(withDuration: 0.5)
                 let remove = SKAction.removeFromParent()
-                let wait = SKAction.wait(forDuration: 0.5)
+                let wait = SKAction.wait(forDuration: 0.0)
                 let activatePlayer = SKAction.run { [unowned self] in
                     startObstacles(initialObstacleFrequency: 3)
                 }

@@ -299,9 +299,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func createObstacles(movingDuration: Double) {
+    func createObstacles(movingDuration: Double, obstacleType: String) {
         // save the texture of our image into a constant
-        let obstacleTexture = SKTexture(imageNamed: "redBox")
+        let obstacleTexture = SKTexture(imageNamed: obstacleType)
         
         // create a sprite with physics body for our obastacle
         let obstacle = SKSpriteNode(texture: obstacleTexture)
@@ -348,11 +348,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // that's why we can adjust the speed of our obstacles here as the score increases
     func startObstacles(initialObstacleFrequency: Double) {
         let create = SKAction.run { [unowned self] in
+            // constants for calculating the speed
             let initialSpeed = 6.00
             let obstacleSpeedFactor = 0.1
+            // calculates the speed
+            // speed is actually the time the object takes from its creation to the top of the screen
+            // this means the lower the speed, the faster the object moves
             let obstacleSpeed = initialSpeed / (Double(score) * obstacleSpeedFactor + 1)
             print("speed is: ", obstacleSpeed)
-            self.createObstacles(movingDuration: obstacleSpeed)
+            // this list contains the names of all of the pictures of our obstacles
+            let obstacles = ["redBox", "redBox0", "redBox1", "redBox2", "redBox3"]
+            // this picks a random obstacle
+            let randomObstacle = obstacles.randomElement()!
+            // this actually creates the obstacle
+            self.createObstacles(movingDuration: obstacleSpeed, obstacleType: randomObstacle)
         }
         
         /*var obstacleFrequency = [3.00]

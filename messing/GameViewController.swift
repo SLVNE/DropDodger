@@ -45,7 +45,6 @@ class GameViewController: UIViewController {
             return .all
         }
     }
-    //we changed the supported orientations in info.plist but we are not brave enough to delete this lines of code*/
 
     override var prefersStatusBarHidden: Bool {
         return true

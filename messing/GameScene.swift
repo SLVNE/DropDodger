@@ -2,8 +2,6 @@
 //  GameScene.swift
 //  messing
 //
-//  Created by Ludwig Müller on 16.11.20.
-//  Restructuring and physics update by Silvian Ene on 19.11.20.
 
 import SpriteKit
 // import this for the tilt control, gives us access to the accelerometer
@@ -786,3 +784,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 }
+
+//  Code by Silvian Ene and Ludwig Mueller
+//  Obstacle Images by Cameron Lai Harris
+//  Icons by Ludwig Mueller
+//  App Logo by Silvian Ene

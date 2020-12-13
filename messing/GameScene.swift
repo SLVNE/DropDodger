@@ -226,6 +226,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.physicsBody?.isDynamic = true
         player.physicsBody?.affectedByGravity = false;
         player.physicsBody?.collisionBitMask = 0
+        
+        // keep the player from leaving the screen
+        let xRange = SKRange(lowerLimit: frame.minX, upperLimit: frame.maxX)
+        let yRange = SKRange(lowerLimit: frame.minY, upperLimit: frame.maxY)
+        player.constraints = [SKConstraint.positionX(xRange,y:yRange)]
     }
     
     // this function detects contact

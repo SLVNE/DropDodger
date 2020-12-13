@@ -47,6 +47,9 @@ var isPlaying = false
 // variable to know which control mode is currently used
 var touchControl = true
 
+// initialize our texture atlas
+let objectAtlas = SKTextureAtlas(named: "objects")
+
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var player: SKSpriteNode!
@@ -304,7 +307,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func createObstacles(movingDuration: Double, obstacleType: String) {
         // save the texture of our image into a constant
-        let obstacleTexture = SKTexture(imageNamed: obstacleType)
+        let obstacleTexture = objectAtlas.textureNamed(obstacleType)
         
         // create a sprite with physics body for our obastacle
         let obstacle = SKSpriteNode(texture: obstacleTexture)
@@ -315,7 +318,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // set a Z position so it is in fron the background
         obstacle.zPosition = 1
         
-        obstacle.setScale(0.3)
+        //obstacle.setScale(0.3)
         
         // we could rotate the obstacle with this line of code
         // obstacle.zRotation = .pi/2

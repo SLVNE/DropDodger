@@ -47,6 +47,7 @@ var touchControl = true
 
 // initialize our texture atlas
 let objectAtlas = SKTextureAtlas(named: "objects")
+let playerAtlas = SKTextureAtlas(named: "player")
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
@@ -209,10 +210,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 print(Int(acceleration))
             }
         }
+        
+        // check if the player is moving to the left or right and adjust the image accordingly
+        let playerVelocity = player.physicsBody?.velocity.dx
+        if playerVelocity ?? 0 >= CGFloat(30) {
+            player.run(SKAction.setTexture(playerAtlas.textureNamed("skydiverR")))
+        }
+        else if playerVelocity ?? 60 <= CGFloat(-30) {
+            player.run(SKAction.setTexture(playerAtlas.textureNamed("skydiverL")))
+        }
     }
     
     func createPlayer() {
-        let playerTexture = SKTexture(imageNamed: "skydiver")
+        let playerTexture = playerAtlas.textureNamed("skydiverL")
         player = SKSpriteNode(texture: playerTexture)
         player.zPosition = 3
         player.anchorPoint = CGPoint(x: 0.5, y: 0.5)

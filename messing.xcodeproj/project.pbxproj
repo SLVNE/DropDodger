@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0224E4C02586CDE80077CEF5 /* objects.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 0224E4BF2586CDE80077CEF5 /* objects.atlas */; };
+		0224E4C52586DC3C0077CEF5 /* player.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 0224E4C42586DC3C0077CEF5 /* player.atlas */; };
 		0282C42725634ED7006A0506 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0282C42625634ED7006A0506 /* AppDelegate.swift */; };
 		0282C42925634ED7006A0506 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0282C42825634ED7006A0506 /* GameScene.sks */; };
 		0282C42B25634ED7006A0506 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 0282C42A25634ED7006A0506 /* Actions.sks */; };
@@ -20,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		0224E4BF2586CDE80077CEF5 /* objects.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = objects.atlas; sourceTree = "<group>"; };
+		0224E4C42586DC3C0077CEF5 /* player.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = player.atlas; sourceTree = "<group>"; };
 		0282C42325634ED7006A0506 /* messing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = messing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0282C42625634ED7006A0506 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0282C42825634ED7006A0506 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -68,6 +70,7 @@
 				0282C42C25634ED7006A0506 /* GameScene.swift */,
 				0282C42E25634ED7006A0506 /* GameViewController.swift */,
 				0282C43025634ED7006A0506 /* Main.storyboard */,
+				0224E4C42586DC3C0077CEF5 /* player.atlas */,
 				0224E4BF2586CDE80077CEF5 /* objects.atlas */,
 				0282C43325634ED8006A0506 /* Assets.xcassets */,
 				0282C43525634ED8006A0506 /* Info.plist */,
@@ -137,6 +140,7 @@
 				0282C43225634ED7006A0506 /* Main.storyboard in Resources */,
 				0282C42925634ED7006A0506 /* GameScene.sks in Resources */,
 				0282C43425634ED8006A0506 /* Assets.xcassets in Resources */,
+				0224E4C52586DC3C0077CEF5 /* player.atlas in Resources */,
 				02969BB72564B306007C93D5 /* Launch Screen.storyboard in Resources */,
 				0282C42B25634ED7006A0506 /* Actions.sks in Resources */,
 			);

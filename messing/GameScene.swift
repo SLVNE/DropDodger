@@ -30,7 +30,7 @@ var disableVolumeButton: SKSpriteNode!
 var controlModeButton: SKSpriteNode!
 var tiltModeButton: SKSpriteNode!
 var touchModeButton: SKSpriteNode!
-var toggleBackground: SKSpriteNode!
+var toggleBackground: SKShapeNode!
 var tapToPlay: SKSpriteNode!
 
 // this gives the game state a default value
@@ -211,7 +211,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func createPlayer() {
-        let playerTexture = SKTexture(imageNamed: "redBall")
+        let playerTexture = SKTexture(imageNamed: "skydiver")
         player = SKSpriteNode(texture: playerTexture)
         player.zPosition = 3
         player.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -315,6 +315,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // set a Z position so it is in fron the background
         obstacle.zPosition = 1
         
+        obstacle.setScale(0.3)
+        
         // we could rotate the obstacle with this line of code
         // obstacle.zRotation = .pi/2
 
@@ -360,7 +362,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let obstacleSpeed = initialSpeed / (Double(score) * obstacleSpeedFactor + 1)
             print("speed is: ", obstacleSpeed)
             // this list contains the names of all of the pictures of our obstacles
-            let obstacles = ["redBox", "redBox0", "redBox1", "redBox2", "redBox3"]
+            let obstacles = ["birdSwarm", "brightCloud", "eagle", "jet", "lightningCloud", "ufo"]
             // this picks a random obstacle
             let randomObstacle = obstacles.randomElement()!
             // this actually creates the obstacle
@@ -481,10 +483,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         touchModeButton.alpha = 0.9
         touchModeButton.zPosition = 4
         
-        toggleBackground = SKSpriteNode(color: UIColor.white, size: CGSize(width: touchModeButton.size.width, height: tiltModeButton.size.height))
-        //toggleBackground.name = "scoreDetect"
-        toggleBackground.physicsBody = SKPhysicsBody(rectangleOf: toggleBackground.size)
-        toggleBackground.physicsBody?.isDynamic = false
+        toggleBackground = SKShapeNode(rectOf: CGSize(width: touchModeButton.size.width, height: tiltModeButton.size.height), cornerRadius: 20)
+        toggleBackground.fillColor = UIColor.white
+        toggleBackground.alpha = 0.9
         
         if touchControl {
         toggleBackground.position = CGPoint(x: frame.midX + touchModeButton.size.width/1.5, y: frame.midY - tiltModeButton.size.height * 1.5)

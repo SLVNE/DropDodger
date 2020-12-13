@@ -28,6 +28,9 @@ var settingsButton: SKSpriteNode!
 var playButton: SKSpriteNode!
 var disableVolumeButton: SKSpriteNode!
 var controlModeButton: SKSpriteNode!
+var tiltModeButton: SKSpriteNode!
+var touchModeButton: SKSpriteNode!
+var toggleBackground: SKSpriteNode!
 var tapToPlay: SKSpriteNode!
 
 // this gives the game state a default value
@@ -465,6 +468,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         controlModeButton.position = CGPoint(x: frame.midX, y: frame.midY - controlModeButton.size.height * 3)
         controlModeButton.alpha = 0.9
         controlModeButton.zPosition = 4
+        
+        tiltModeButton = SKSpriteNode(imageNamed: "tilt")
+        tiltModeButton.setScale(0.558)
+        tiltModeButton.position = CGPoint(x: frame.midX - tiltModeButton.size.width/1.5, y: frame.midY - tiltModeButton.size.height * 1.45)
+        tiltModeButton.alpha = 0.9
+        tiltModeButton.zPosition = 4
+        
+        touchModeButton = SKSpriteNode(imageNamed: "touch")
+        touchModeButton.setScale(0.5)
+        touchModeButton.position = CGPoint(x: frame.midX + touchModeButton.size.width/1.5, y: frame.midY - tiltModeButton.size.height * 1.5)
+        touchModeButton.alpha = 0.9
+        touchModeButton.zPosition = 4
+        
+        toggleBackground = SKSpriteNode(color: UIColor.white, size: CGSize(width: touchModeButton.size.width, height: tiltModeButton.size.height))
+        //toggleBackground.name = "scoreDetect"
+        toggleBackground.physicsBody = SKPhysicsBody(rectangleOf: toggleBackground.size)
+        toggleBackground.physicsBody?.isDynamic = false
+        
+        if touchControl {
+        toggleBackground.position = CGPoint(x: frame.midX + touchModeButton.size.width/1.5, y: frame.midY - tiltModeButton.size.height * 1.5)
+        }
+        
+        if !touchControl {
+        toggleBackground.position = CGPoint(x: frame.midX - tiltModeButton.size.width/1.5, y: frame.midY - tiltModeButton.size.height * 1.5)
+        }
+        toggleBackground.zPosition = 3
+        
     }
     
     
@@ -558,7 +588,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 // show our menu buttons
                 addChild(playButton)
                 addChild(disableVolumeButton)
-                addChild(controlModeButton)
+                //addChild(controlModeButton)
+                addChild(touchModeButton)
+                addChild(tiltModeButton)
+                addChild(toggleBackground)
                 logo.zPosition = -1
                 tapToPlay.zPosition = -1
                 headerLabel.zPosition = -1
@@ -579,7 +612,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     // hide our buttons
                     playButton.removeFromParent()
                     disableVolumeButton.removeFromParent()
-                    controlModeButton.removeFromParent()
+                    //controlModeButton.removeFromParent()
+                    touchModeButton.removeFromParent()
+                    tiltModeButton.removeFromParent()
+                    toggleBackground.removeFromParent()
                     if isDead == false {
                         //speed = 1
                         self.isPaused = false
@@ -603,11 +639,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 // if control mode button is pressed
-                else if controlModeButton.contains(location) {
+                else if tiltModeButton.contains(location) {
                     let defaults = UserDefaults.standard
                     touchControl = defaults.bool(forKey: "touchEnabled")
                     // if it's false toggle it to switch it to true and vice versa
-                    touchControl.toggle()
+                    touchControl = false
                     defaults.setValue(touchControl, forKey: "touchEnabled")
                     
                     // debugging
@@ -615,13 +651,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     // if our control mode is tilt, start collecting accelerometer data
                     // else means it's touch and then we stop collecting accelerometer data
-                    if !touchControl {
-                        motionManager = CMMotionManager()
-                        motionManager.startAccelerometerUpdates()
-                    }
-                    else {
-                        motionManager.stopAccelerometerUpdates()
-                    }
+                   
+                    toggleBackground.position = CGPoint(x: frame.midX - tiltModeButton.size.width/1.5, y: frame.midY - tiltModeButton.size.height * 1.5)
+                    motionManager = CMMotionManager()
+                    motionManager.startAccelerometerUpdates()
+                    
+                    
+                    // add code here to switch images
+                }
+                
+                else if touchModeButton.contains(location) {
+                    let defaults = UserDefaults.standard
+                    touchControl = defaults.bool(forKey: "touchEnabled")
+                    // if it's false toggle it to switch it to true and vice versa
+                    touchControl = true
+                    defaults.setValue(touchControl, forKey: "touchEnabled")
+                    
+                    // debugging
+                    print(touchControl)
+                    
+                    // if our control mode is tilt, start collecting accelerometer data
+                    // else means it's touch and then we stop collecting accelerometer data
+                    
+                    toggleBackground.position = CGPoint(x: frame.midX + touchModeButton.size.width/1.5, y: frame.midY - tiltModeButton.size.height * 1.5)
+                    motionManager.stopAccelerometerUpdates()
+                    
                     
                     // add code here to switch images
                 }

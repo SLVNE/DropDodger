@@ -104,7 +104,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if let musicURL = Bundle.main.url(forResource: "playMusic", withExtension: "mp3") {
             backgroundMusic = SKAudioNode(url: musicURL)
+            backgroundMusic.run(SKAction.changeVolume(to: 0, duration: 0.0))
             addChild(backgroundMusic)
+            
             
         }
         

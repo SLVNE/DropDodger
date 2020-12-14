@@ -97,7 +97,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             motionManager.startAccelerometerUpdates()
         }
         
-        if let musicURL = Bundle.main.url(forResource: "inGameMusic", withExtension: "mp3") {
+        if let musicURL = Bundle.main.url(forResource: "playMusic", withExtension: "mp3") {
             backgroundMusic = SKAudioNode(url: musicURL)
             addChild(backgroundMusic)
         }
@@ -285,6 +285,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if contact.bodyA.node == player || contact.bodyB.node == player {
             
             backgroundMusic.removeFromParent()
+            // play a sound when the collision happens
+            let sound = SKAction.playSoundFileNamed("slap.m4a", waitForCompletion: false)
+            run(sound)
             // this shows the gameover sprite when the player dies
             gameOver.alpha = 1
             gameState = .dead
@@ -304,9 +307,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // print our leaderboard
             printLeaderboard()
             
-            // play a sound when the collision happens
-            let sound = SKAction.playSoundFileNamed("slap.m4a", waitForCompletion: false)
-            run(sound)
             
             // change the music for when the player dies
             
@@ -563,7 +563,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 // stop and change the sick beat
                 backgroundMusic.removeFromParent()
                 
-                if let musicURL = Bundle.main.url(forResource: "playMusic", withExtension: "mp3") {
+                if let musicURL = Bundle.main.url(forResource: "inGameMusic", withExtension: "mp3") {
                     backgroundMusic = SKAudioNode(url: musicURL)
                     addChild(backgroundMusic)
                 }

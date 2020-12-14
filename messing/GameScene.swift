@@ -207,7 +207,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 // otherwise the deadzone we just introduced would leave the player at his last velocity
                 lastState.x = player.position.x
                 // debugging
-                print(Int(acceleration))
+                //print(Int(acceleration))
             }
         }
         
@@ -342,9 +342,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ScoreCountBar.physicsBody = SKPhysicsBody(rectangleOf: ScoreCountBar.size)
         ScoreCountBar.physicsBody?.isDynamic = false
         
-        ScoreCountBar.zPosition = 1
+        ScoreCountBar.zPosition = 0
+        ScoreCountBar.alpha = 0
         
-        //addChild(topRock)
         addChild(obstacle)
         addChild(ScoreCountBar)
 
@@ -376,7 +376,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // speed is actually the time the object takes from its creation to the top of the screen
             // this means the lower the speed, the faster the object moves
             let obstacleSpeed = initialSpeed / (Double(score) * obstacleSpeedFactor + 1)
-            print("speed is: ", obstacleSpeed)
+            // debugging
+            //print("speed is: ", obstacleSpeed)
             // this list contains the names of all of the pictures of our obstacles
             let obstacles = ["birdSwarm", "brightCloud", "eagle", "jet", "lightningCloud", "ufo"]
             // this picks a random obstacle
@@ -664,7 +665,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     defaults.setValue(touchControl, forKey: "touchEnabled")
                     
                     // debugging
-                    print(touchControl)
+                    //print(touchControl)
                     
                     // if our control mode is tilt, start collecting accelerometer data
                     // else means it's touch and then we stop collecting accelerometer data
@@ -685,7 +686,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     defaults.setValue(touchControl, forKey: "touchEnabled")
                     
                     // debugging
-                    print(touchControl)
+                    //print(touchControl)
                     
                     // if our control mode is tilt, start collecting accelerometer data
                     // else means it's touch and then we stop collecting accelerometer data
@@ -744,8 +745,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             defaults.set(scoreBoard, forKey: "scoreBoard")
             defaults.set(nameBoard, forKey: "nameBoard")
             // just some debugging
-            print(scoreBoard)
-            print(nameBoard)
+            //print(scoreBoard)
+            //print(nameBoard)
         }
     }
     

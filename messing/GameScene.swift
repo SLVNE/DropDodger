@@ -45,6 +45,9 @@ var isPlaying = false
 // variable to know which control mode is currently used
 var touchControl = true
 
+// variable for muting the sound
+var mute = false
+
 // initialize our texture atlas
 let objectAtlas = SKTextureAtlas(named: "objects")
 let playerAtlas = SKTextureAtlas(named: "player")
@@ -91,17 +94,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // check which control mode is used and save it into the variable touchControl
         let defaults = UserDefaults.standard
         touchControl = defaults.bool(forKey: "touchEnabled") //as? [Bool] ?? [Bool]()
+        mute = defaults.bool(forKey: "muteEnabled")
         // intialize accelerometer if necessary
         if !touchControl {
             motionManager = CMMotionManager()
             motionManager.startAccelerometerUpdates()
         }
         
+        
         if let musicURL = Bundle.main.url(forResource: "playMusic", withExtension: "mp3") {
             backgroundMusic = SKAudioNode(url: musicURL)
             addChild(backgroundMusic)
+            
         }
-        
         
         // create all of our sprites
         createScore()
@@ -197,6 +202,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if gameState == .firstScreen {
             isDead = false
         }
+        
+        if mute {
+            //backgroundMusic.removeFromParent()
+            backgroundMusic.run(SKAction.changeVolume(to: 0, duration: 0.0))
+            //disableVolumeButton.run(SKAction.setTexture(SKTexture(imageNamed: "audioOff")))
+        }
+        
+        else {
+            backgroundMusic.run(SKAction.changeVolume(to: 1, duration: 0.5))
+            //disableVolumeButton.run(SKAction.setTexture(SKTexture(imageNamed: "audioOn")))
+        }
+
         
         moveBGround()
         
@@ -499,7 +516,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         playButton.zPosition = 4
         
         // this creates our disable volume button button and adds it invisibly
-        disableVolumeButton = SKSpriteNode(imageNamed: "disableVolumeButton")
+        if mute {
+            //disableVolumeButton = SKSpriteNode(imageNamed: "audioOff")
+            disableVolumeButton = SKSpriteNode(imageNamed: "audioOff")
+        }
+        else {
+            disableVolumeButton = SKSpriteNode(imageNamed: "audioOn")
+        }
+        disableVolumeButton.setScale(0.3)
         disableVolumeButton.position = CGPoint(x: frame.midX, y: frame.midY + disableVolumeButton.size.height * 3)
         disableVolumeButton.alpha = 0.9
         disableVolumeButton.zPosition = 4
@@ -723,9 +747,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     toggleBackground.position = CGPoint(x: frame.midX + touchModeButton.size.width/1.5, y: frame.midY - tiltModeButton.size.height * 1.5)
                     motionManager.stopAccelerometerUpdates()
+                }
+                
+                else if disableVolumeButton.contains(location){
+                    let defaults = UserDefaults.standard
+                    //let prevMute = mute
+                    //mute = defaults.bool(forKey: "muteEnabled")
+                    mute.toggle()
                     
+                    defaults.setValue(mute, forKey: "muteEnabled")
                     
-                    // add code here to switch images
+                    if mute {
+                        disableVolumeButton.removeFromParent()
+                        disableVolumeButton = SKSpriteNode(imageNamed: "audioOff")
+                    }
+                    else {
+                        disableVolumeButton.removeFromParent()
+                        disableVolumeButton = SKSpriteNode(imageNamed: "audioOn")
+                    }
+                    
+                    disableVolumeButton.setScale(0.3)
+                    disableVolumeButton.position = CGPoint(x: frame.midX, y: frame.midY + disableVolumeButton.size.height * 3)
+                    disableVolumeButton.alpha = 0.9
+                    disableVolumeButton.zPosition = 4
+                    
+                    addChild(disableVolumeButton)
+                    
                 }
         }
         
@@ -737,7 +784,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let defaults = UserDefaults.standard
         
         if defaults.array(forKey: "scoreBoard") == nil {
-            print("fuck")
+            
             let scoreBoard = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             defaults.set(scoreBoard, forKey: "scoreBoard")
             
@@ -749,6 +796,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             let touchEnabled = true
             defaults.setValue(touchEnabled, forKey: "touchEnabled")
+            
+            let muteEnabled = false
+            defaults.setValue(muteEnabled, forKey: "muteEnabled")
         }
     }
     
@@ -822,13 +872,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             scoreLineLabel.zPosition = 2
             scoreLineLabel.name = "scoreLineLabel"
             addChild(scoreLineLabel)
-        }
-    }
-    
-    func playBackground(){
-        if let musicURL = Bundle.main.url(forResource: "inGameMusic", withExtension: "mp3") {
-            backgroundMusic = SKAudioNode(url: musicURL)
-            addChild(backgroundMusic)
         }
     }
     

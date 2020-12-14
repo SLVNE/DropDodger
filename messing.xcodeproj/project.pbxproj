@@ -20,6 +20,7 @@
 		7645FB522586F9580089AD93 /* inGameMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7645FB512586F9580089AD93 /* inGameMusic.mp3 */; };
 		7645FB552586FB570089AD93 /* playMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7645FB542586FB570089AD93 /* playMusic.mp3 */; };
 		7645FB58258700540089AD93 /* slap.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 7645FB57258700540089AD93 /* slap.m4a */; };
+		7645FB5B258709C30089AD93 /* coinSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7645FB5A258709C30089AD93 /* coinSound.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		7645FB512586F9580089AD93 /* inGameMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = inGameMusic.mp3; sourceTree = "<group>"; };
 		7645FB542586FB570089AD93 /* playMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = playMusic.mp3; sourceTree = "<group>"; };
 		7645FB57258700540089AD93 /* slap.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = slap.m4a; sourceTree = "<group>"; };
+		7645FB5A258709C30089AD93 /* coinSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = coinSound.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +91,7 @@
 		7645FB502586F9580089AD93 /* sound effects */ = {
 			isa = PBXGroup;
 			children = (
+				7645FB5A258709C30089AD93 /* coinSound.wav */,
 				7645FB57258700540089AD93 /* slap.m4a */,
 				7645FB542586FB570089AD93 /* playMusic.mp3 */,
 				7645FB512586F9580089AD93 /* inGameMusic.mp3 */,
@@ -161,6 +164,7 @@
 				02969BB72564B306007C93D5 /* Launch Screen.storyboard in Resources */,
 				7645FB552586FB570089AD93 /* playMusic.mp3 in Resources */,
 				0282C42B25634ED7006A0506 /* Actions.sks in Resources */,
+				7645FB5B258709C30089AD93 /* coinSound.wav in Resources */,
 				7645FB58258700540089AD93 /* slap.m4a in Resources */,
 				7645FB522586F9580089AD93 /* inGameMusic.mp3 in Resources */,
 			);

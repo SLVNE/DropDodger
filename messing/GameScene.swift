@@ -268,6 +268,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //let sound = SKAction.playSoundFileNamed("coin.wav", waitForCompletion: false)
             //run(sound)
             
+            // play a sound when the collision happens
+            let sound = SKAction.playSoundFileNamed("coinSound.wav", waitForCompletion: false)
+            run(sound)
+            
             // increment our score
             score += 1
 

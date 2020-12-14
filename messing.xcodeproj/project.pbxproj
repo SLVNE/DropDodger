@@ -17,6 +17,9 @@
 		0282C43225634ED7006A0506 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0282C43025634ED7006A0506 /* Main.storyboard */; };
 		0282C43425634ED8006A0506 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0282C43325634ED8006A0506 /* Assets.xcassets */; };
 		02969BB72564B306007C93D5 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02969BB62564B306007C93D5 /* Launch Screen.storyboard */; };
+		7645FB522586F9580089AD93 /* inGameMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7645FB512586F9580089AD93 /* inGameMusic.mp3 */; };
+		7645FB552586FB570089AD93 /* playMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7645FB542586FB570089AD93 /* playMusic.mp3 */; };
+		7645FB58258700540089AD93 /* slap.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 7645FB57258700540089AD93 /* slap.m4a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +35,9 @@
 		0282C43325634ED8006A0506 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0282C43525634ED8006A0506 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		02969BB62564B306007C93D5 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		7645FB512586F9580089AD93 /* inGameMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = inGameMusic.mp3; sourceTree = "<group>"; };
+		7645FB542586FB570089AD93 /* playMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = playMusic.mp3; sourceTree = "<group>"; };
+		7645FB57258700540089AD93 /* slap.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = slap.m4a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +70,7 @@
 		0282C42525634ED7006A0506 /* messing */ = {
 			isa = PBXGroup;
 			children = (
+				7645FB502586F9580089AD93 /* sound effects */,
 				0282C42625634ED7006A0506 /* AppDelegate.swift */,
 				0282C42825634ED7006A0506 /* GameScene.sks */,
 				0282C42A25634ED7006A0506 /* Actions.sks */,
@@ -77,6 +84,16 @@
 				02969BB62564B306007C93D5 /* Launch Screen.storyboard */,
 			);
 			path = messing;
+			sourceTree = "<group>";
+		};
+		7645FB502586F9580089AD93 /* sound effects */ = {
+			isa = PBXGroup;
+			children = (
+				7645FB57258700540089AD93 /* slap.m4a */,
+				7645FB542586FB570089AD93 /* playMusic.mp3 */,
+				7645FB512586F9580089AD93 /* inGameMusic.mp3 */,
+			);
+			path = "sound effects";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -142,7 +159,10 @@
 				0282C43425634ED8006A0506 /* Assets.xcassets in Resources */,
 				0224E4C52586DC3C0077CEF5 /* player.atlas in Resources */,
 				02969BB72564B306007C93D5 /* Launch Screen.storyboard in Resources */,
+				7645FB552586FB570089AD93 /* playMusic.mp3 in Resources */,
 				0282C42B25634ED7006A0506 /* Actions.sks in Resources */,
+				7645FB58258700540089AD93 /* slap.m4a in Resources */,
+				7645FB522586F9580089AD93 /* inGameMusic.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,14 +316,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 99W8N72J3X;
+				DEVELOPMENT_TEAM = Q6WU23UB5X;
 				INFOPLIST_FILE = messing/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.fsccs;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fsccs4;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -318,14 +338,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 99W8N72J3X;
+				DEVELOPMENT_TEAM = Q6WU23UB5X;
 				INFOPLIST_FILE = messing/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.fsccs;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fsccs4;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

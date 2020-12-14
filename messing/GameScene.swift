@@ -6,7 +6,6 @@
 import SpriteKit
 // import this for the tilt control, gives us access to the accelerometer
 import CoreMotion
-
 // this is for the tilt control
 var motionManager: CMMotionManager!
 
@@ -19,7 +18,7 @@ enum GameState {
     case fadeOutSettings
 }
 
-// create three more variables for what is actually shown during the different game states
+// create many more variables for what is actually shown during the different game states
 var logo: SKSpriteNode!
 var gameOver: SKSpriteNode!
 var settingsButton: SKSpriteNode!
@@ -30,6 +29,7 @@ var tiltModeButton: SKSpriteNode!
 var touchModeButton: SKSpriteNode!
 var toggleBackground: SKShapeNode!
 var tapToPlay: SKSpriteNode!
+var backgroundMusic: SKAudioNode!
 
 // this gives the game state a default value
 var gameState = GameState.firstScreen
@@ -96,6 +96,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             motionManager = CMMotionManager()
             motionManager.startAccelerometerUpdates()
         }
+        
+        if let musicURL = Bundle.main.url(forResource: "inGameMusic", withExtension: "mp3") {
+            backgroundMusic = SKAudioNode(url: musicURL)
+            addChild(backgroundMusic)
+        }
+        
         
         // create all of our sprites
         createScore()
@@ -277,6 +283,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // check for contact with an obstacle
         if contact.bodyA.node == player || contact.bodyB.node == player {
+            
+            backgroundMusic.removeFromParent()
             // this shows the gameover sprite when the player dies
             gameOver.alpha = 1
             gameState = .dead
@@ -284,14 +292,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // backgroundMusic.run(SKAction.stop())
             
             player.removeFromParent()
-            self.isPaused = true
-            //speed = 0
+            
+            // couldn't play music when self.isPaused = true so we reverted to speed = 0 to stop the game
+            // if tilt active the player can still be moved but the player is removed so it should work
+            //self.isPaused = true
+            speed = 0
             
             //add the score to storage
             addScore()
             
             // print our leaderboard
             printLeaderboard()
+            
+            // play a sound when the collision happens
+            let sound = SKAction.playSoundFileNamed("slap.m4a", waitForCompletion: false)
+            run(sound)
+            
+            // change the music for when the player dies
+            
         }
         // try to fix that two collisions are detected and the score gets created twice
         // NEEDS TO BE FIXED - update, it has been fixed
@@ -542,6 +560,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
         
             case .firstScreen:
+                // stop and change the sick beat
+                backgroundMusic.removeFromParent()
+                
+                if let musicURL = Bundle.main.url(forResource: "playMusic", withExtension: "mp3") {
+                    backgroundMusic = SKAudioNode(url: musicURL)
+                    addChild(backgroundMusic)
+                }
+                
                 // initial screen with logo before each game, tap to play
                 
                 gameState = .playing
@@ -794,9 +820,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             addChild(scoreLineLabel)
         }
     }
+    
+    func playBackground(){
+        if let musicURL = Bundle.main.url(forResource: "inGameMusic", withExtension: "mp3") {
+            backgroundMusic = SKAudioNode(url: musicURL)
+            addChild(backgroundMusic)
+        }
+    }
+    
 }
 
 //  Code by Silvian Ene and Ludwig Mueller
 //  Obstacle Images by Cameron Lai Harris
 //  Icons by Ludwig Mueller
 //  App Logo by Silvian Ene
+//  Jorge Hernandez - Chopsticks

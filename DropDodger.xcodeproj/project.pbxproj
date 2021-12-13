@@ -26,7 +26,7 @@
 /* Begin PBXFileReference section */
 		0224E4BF2586CDE80077CEF5 /* objects.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = objects.atlas; sourceTree = "<group>"; };
 		0224E4C42586DC3C0077CEF5 /* player.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = player.atlas; sourceTree = "<group>"; };
-		0282C42325634ED7006A0506 /* messing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = messing.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0282C42325634ED7006A0506 /* DropDodger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DropDodger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0282C42625634ED7006A0506 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0282C42825634ED7006A0506 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		0282C42A25634ED7006A0506 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -56,7 +56,7 @@
 		0282C41A25634ED7006A0506 = {
 			isa = PBXGroup;
 			children = (
-				0282C42525634ED7006A0506 /* messing */,
+				0282C42525634ED7006A0506 /* DropDodger */,
 				0282C42425634ED7006A0506 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,12 +64,12 @@
 		0282C42425634ED7006A0506 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0282C42325634ED7006A0506 /* messing.app */,
+				0282C42325634ED7006A0506 /* DropDodger.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		0282C42525634ED7006A0506 /* messing */ = {
+		0282C42525634ED7006A0506 /* DropDodger */ = {
 			isa = PBXGroup;
 			children = (
 				7645FB502586F9580089AD93 /* sound effects */,
@@ -85,7 +85,7 @@
 				0282C43525634ED8006A0506 /* Info.plist */,
 				02969BB62564B306007C93D5 /* Launch Screen.storyboard */,
 			);
-			path = messing;
+			path = DropDodger;
 			sourceTree = "<group>";
 		};
 		7645FB502586F9580089AD93 /* sound effects */ = {
@@ -102,9 +102,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0282C42225634ED7006A0506 /* messing */ = {
+		0282C42225634ED7006A0506 /* DropDodger */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0282C43825634ED8006A0506 /* Build configuration list for PBXNativeTarget "messing" */;
+			buildConfigurationList = 0282C43825634ED8006A0506 /* Build configuration list for PBXNativeTarget "DropDodger" */;
 			buildPhases = (
 				0282C41F25634ED7006A0506 /* Sources */,
 				0282C42025634ED7006A0506 /* Frameworks */,
@@ -114,9 +114,9 @@
 			);
 			dependencies = (
 			);
-			name = messing;
+			name = DropDodger;
 			productName = messing;
-			productReference = 0282C42325634ED7006A0506 /* messing.app */;
+			productReference = 0282C42325634ED7006A0506 /* DropDodger.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -133,7 +133,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0282C41E25634ED7006A0506 /* Build configuration list for PBXProject "messing" */;
+			buildConfigurationList = 0282C41E25634ED7006A0506 /* Build configuration list for PBXProject "DropDodger" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -146,7 +146,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0282C42225634ED7006A0506 /* messing */,
+				0282C42225634ED7006A0506 /* DropDodger */,
 			);
 		};
 /* End PBXProject section */
@@ -321,7 +321,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q6WU23UB5X;
-				INFOPLIST_FILE = messing/Info.plist;
+				INFOPLIST_FILE = DropDodger/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -343,7 +343,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = Q6WU23UB5X;
-				INFOPLIST_FILE = messing/Info.plist;
+				INFOPLIST_FILE = DropDodger/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -360,7 +360,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0282C41E25634ED7006A0506 /* Build configuration list for PBXProject "messing" */ = {
+		0282C41E25634ED7006A0506 /* Build configuration list for PBXProject "DropDodger" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0282C43625634ED8006A0506 /* Debug */,
@@ -369,7 +369,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0282C43825634ED8006A0506 /* Build configuration list for PBXNativeTarget "messing" */ = {
+		0282C43825634ED8006A0506 /* Build configuration list for PBXNativeTarget "DropDodger" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0282C43925634ED8006A0506 /* Debug */,
